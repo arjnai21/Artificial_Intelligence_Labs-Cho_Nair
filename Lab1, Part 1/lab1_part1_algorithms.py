@@ -77,7 +77,7 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
 
     # if loop breaks before finding goal, search is failure; return None
     return None
-
+# yurt
 
 """
 Implement DFS, BFS, and UCS algorithms in a similar paradigm to the above.

@@ -55,10 +55,17 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
 
     frontier = [initial_state]
 
+    extended_filter = set()
+
     while frontier: # frontier is False when it is empty. So just keep going until out of places to go...
 
         # choose next state to "extend" from frontier
         ext_node = random.choice(frontier)
+
+        if (ext_node.get_position() in extended_filter):
+            continue
+
+        extended_filter.add(ext_node.get_position())
 
         counter['num_extends'] += 1
 
@@ -77,7 +84,7 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
             if (avoid_backtrack and ext_node.get_parent() == state):
                 continue
 
-            if (filtering and state in ext_node.get_path()):
+            if (filtering and state.get_position() in extended_filter):
                 continue
 
             if (cutoff != INF and state.get_path_length() > cutoff):
@@ -118,10 +125,17 @@ def DFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
 
     frontier = [initial_state]
 
+    extended_filter = set()
+
     while frontier:  # frontier is False when it is empty. So just keep going until out of places to go...
 
         # choose next state to "extend" from frontier
         ext_node = frontier.pop()
+
+        if (ext_node.get_position() in extended_filter):
+            continue
+
+        extended_filter.add(ext_node.get_position())
 
         counter['num_extends'] += 1
 
@@ -139,7 +153,7 @@ def DFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
             if (avoid_backtrack and ext_node.get_parent() == state):
                 continue
 
-            if (filtering and state in ext_node.get_path()):
+            if (filtering and state.get_position() in extended_filter):
                 continue
 
             if (cutoff != INF and state.get_path_length() > cutoff):
@@ -168,10 +182,17 @@ def UCS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
     frontier = PriorityQueue()
     frontier.append(initial_state, initial_state.get_path_cost())
 
+    extended_filter = set()
+
     while frontier:  # frontier is False when it is empty. So just keep going until out of places to go...
 
         # choose next state to "extend" from frontier
         ext_node = frontier.pop()
+
+        if (ext_node.get_position() in extended_filter):
+            continue
+
+        extended_filter.add(ext_node.get_position())
 
         counter['num_extends'] += 1
 
@@ -189,7 +210,7 @@ def UCS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
             if (avoid_backtrack and ext_node.get_parent() == state):
                 continue
 
-            if (filtering and state in ext_node.get_path()):
+            if (filtering and state.get_position() in extended_filter):
                 continue
 
             if (cutoff != INF and state.get_path_length() > cutoff):

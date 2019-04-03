@@ -170,7 +170,48 @@ def BFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
         state_callback_fn = lambda state : False, # A callback function. If it returns True, terminate
         counter = {'num_enqueues':0, 'num_extends':0}):
 
-    # TODO implement Breadth First Search
+    frontier = deque()
+
+    frontier.append(initial_state)
+
+    extended_filter = set()
+    while frontier:  # frontier is False when it is empty. So just keep going until out of places to go...
+
+        # choose next state to "extend" from frontier
+        ext_node = frontier.popleft()
+
+
+        if (ext_node.get_position() in extended_filter):
+            continue
+
+        extended_filter.add(ext_node.get_position())
+
+        counter['num_extends'] += 1
+
+        # are we there? If so, return the node.
+        if ext_node.is_goal_state():
+            return ext_node
+
+        # Update our caller (e.g. GUI) with the state we're extending.
+        # Terminate search early if True is returned.
+        if (state_callback_fn(ext_node)):
+            break
+
+        ### Update frontier with next states
+        for state in ext_node.generate_next_states():
+            if (avoid_backtrack and ext_node.get_parent() == state):
+                continue
+
+            if (filtering and state.get_position() in extended_filter):
+                continue
+
+            if (cutoff != INF and state.get_path_length() > cutoff):
+                continue
+
+            frontier.append(state)
+            counter['num_enqueues'] += 1
+
+    # if loop breaks before finding goal, search is failure; return None
     return None
 
 

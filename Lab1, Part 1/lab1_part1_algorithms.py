@@ -58,11 +58,10 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
     extended_filter = set()
 
     while frontier: # frontier is False when it is empty. So just keep going until out of places to go...
-
         # choose next state to "extend" from frontier
         ext_node = random.choice(frontier)
 
-        if (ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_position() in extended_filter):
             continue
 
         extended_filter.add(ext_node.get_position())
@@ -92,6 +91,8 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
 
             frontier.append(state)
             counter['num_enqueues'] += 1
+
+        print(len(frontier))
 
     # if loop breaks before finding goal, search is failure; return None
     return None
@@ -132,7 +133,7 @@ def DFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
         # choose next state to "extend" from frontier
         ext_node = frontier.pop()
 
-        if (ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_position() in extended_filter):
             continue
 
         extended_filter.add(ext_node.get_position())
@@ -181,7 +182,7 @@ def BFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
         ext_node = frontier.popleft()
 
 
-        if (ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_position() in extended_filter):
             continue
 
         extended_filter.add(ext_node.get_position())
@@ -230,7 +231,7 @@ def UCS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
         # choose next state to "extend" from frontier
         ext_node = frontier.pop()
 
-        if (ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_position() in extended_filter):
             continue
 
         extended_filter.add(ext_node.get_position())

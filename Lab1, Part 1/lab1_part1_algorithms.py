@@ -61,10 +61,10 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
         # choose next state to "extend" from frontier
         ext_node = random.choice(frontier)
 
-        if (filtering and ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_all_features() in extended_filter):
             continue
 
-        extended_filter.add(ext_node.get_position())
+        extended_filter.add(ext_node.get_all_features())
 
         counter['num_extends'] += 1
 
@@ -83,7 +83,7 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
             if (avoid_backtrack and ext_node.get_parent() == state):
                 continue
 
-            if (filtering and state.get_position() in extended_filter):
+            if (filtering and state.get_all_features() in extended_filter):
                 continue
 
             if (cutoff != INF and state.get_path_length() > cutoff):
@@ -133,10 +133,10 @@ def DFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
         # choose next state to "extend" from frontier
         ext_node = frontier.pop()
 
-        if (filtering and ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_all_features() in extended_filter):
             continue
 
-        extended_filter.add(ext_node.get_position())
+        extended_filter.add(ext_node.get_all_features())
 
         counter['num_extends'] += 1
 
@@ -154,7 +154,7 @@ def DFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
             if (avoid_backtrack and ext_node.get_parent() == state):
                 continue
 
-            if (filtering and state.get_position() in extended_filter):
+            if (filtering and state.get_all_features() in extended_filter):
                 continue
 
             if (cutoff != INF and state.get_path_length() > cutoff):
@@ -182,10 +182,10 @@ def BFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
         ext_node = frontier.popleft()
 
 
-        if (filtering and ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_all_features() in extended_filter):
             continue
 
-        extended_filter.add(ext_node.get_position())
+        extended_filter.add(ext_node.get_all_features())
 
         counter['num_extends'] += 1
 
@@ -203,7 +203,7 @@ def BFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
             if (avoid_backtrack and ext_node.get_parent() == state):
                 continue
 
-            if (filtering and state.get_position() in extended_filter):
+            if (filtering and state.get_all_features() in extended_filter):
                 continue
 
             if (cutoff != INF and state.get_path_length() > cutoff):
@@ -231,10 +231,10 @@ def UCS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
         # choose next state to "extend" from frontier
         ext_node = frontier.pop()
 
-        if (filtering and ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_all_features() in extended_filter):
             continue
 
-        extended_filter.add(ext_node.get_position())
+        extended_filter.add(ext_node.get_all_features())
 
         counter['num_extends'] += 1
 
@@ -252,7 +252,7 @@ def UCS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
             if (avoid_backtrack and ext_node.get_parent() == state):
                 continue
 
-            if (filtering and state.get_position() in extended_filter):
+            if (filtering and state.get_all_features() in extended_filter):
                 continue
 
             if (cutoff != INF and state.get_path_length() > cutoff):

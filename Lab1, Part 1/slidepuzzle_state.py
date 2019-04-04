@@ -10,7 +10,29 @@ class SlidePuzzleState(StateNode):
     """
     # Override
     def readFromFile(filename):
-        raise NotImplementedError
+        with open(filename, 'r') as file:
+            grid = []
+            size = int(file.readline())
+            empty = ()
+            for y in range(size):
+                x = 0
+                row = []
+                for i in file.readline().split():
+                    if i == "0":
+                        empty = (y,x)
+                    row.append(int(i))
+                    x += 1
+                assert (len(row) == size)
+
+                grid.append(tuple(row)) # list -> tuple makes it immutable, needed for hashing
+            grid = tuple(grid) # grid is a tuple of tuples - a 2d grid!
+
+            return SlidePuzzleState(size = size,
+                                grid = grid,
+                                parent = None,
+                                path_length = 0,
+                                path_cost = 0,
+                                empty_pos = empty)
 
     """
     Creates a SlidePuzzleState node.
@@ -23,9 +45,11 @@ class SlidePuzzleState(StateNode):
     path_length, the number of actions taken in the path to reach the state
     path_cost (optional), the cost of the entire path to reach the state
     """
-    def __init__(self, parent, path_length, path_cost = 0, empty_pos = None) :
+    def __init__(self, size, grid, parent, path_length, path_cost = 0, empty_pos = None) :
         super().__init__(parent, path_length, path_cost)
-        raise NotImplementedError
+        self.size = size
+        self.grid = grid
+        self.empty_pos = empty_pos
 
 
     """
@@ -33,7 +57,7 @@ class SlidePuzzleState(StateNode):
     Needed by the GUI, should be FAST
     """
     def size(self) :
-        raise NotImplementedError
+        return self.size
 
     """
     Returns the number at the tile at the given row and col (starting from 0).
@@ -41,14 +65,14 @@ class SlidePuzzleState(StateNode):
     Needed by the GUI, should be FAST
     """
     def tile_at(self, row, col) :
-        raise NotImplementedError
+        return self.grid[row][col]
 
     """
     Returns a 2-tuple (row, col) of coordinates of the empty tile.
     Needed by the GUI, should be FAST
     """
     def get_empty_pos(self):
-        raise NotImplementedError
+        return self.empty_pos
 
 
     """
@@ -62,7 +86,7 @@ class SlidePuzzleState(StateNode):
     """
     # Override
     def get_all_features(self) :
-        raise NotImplementedError
+        return (self.empty_pos, self.grid)
 
     """
     Returns True if a goal state.

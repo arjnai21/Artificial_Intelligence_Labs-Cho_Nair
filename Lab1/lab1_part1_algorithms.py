@@ -91,7 +91,6 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
 
     # if loop breaks before finding goal, search is failure; return None
     return None
-# yurt
 
 """
 Implement DFS, BFS, and UCS algorithms in a similar paradigm to the above.
@@ -156,7 +155,6 @@ def DFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
     # if loop breaks before finding goal, search is failure; return None
     return None
 
-#yurt
 def BFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
         state_callback_fn = lambda state : False, # A callback function. If it returns True, terminate
         counter = {'num_enqueues':0, 'num_extends':0}):

@@ -90,7 +90,7 @@ class SlidePuzzleState(StateNode):
     """
     # Override
     def get_all_features(self) :
-        return self.empty_pos, self.grid
+        return (self.empty_pos, self.grid)
 
     """
     Returns True if a goal state.
@@ -98,8 +98,8 @@ class SlidePuzzleState(StateNode):
     # Override
     def is_goal_state(self) :
         counter = 0
-        for i in self.grid:
-            for j in i:
+        for i in range(len(self.grid)):
+            for j in range(len(self.grid)):
                 if self.grid[i][j] != counter:
                     return False
                 counter += 1
@@ -112,8 +112,8 @@ class SlidePuzzleState(StateNode):
     # Override
     def __str__(self):
         str = ""
-        for i in self.grid:
-            for j in i:
+        for i in range(len(self.grid)):
+            for j in range(self.grid()[i]):
                 str += self.grid[i][j]
             str += "\n"
         return str
@@ -149,9 +149,9 @@ class SlidePuzzleState(StateNode):
             tmp = new_grid[new_x][new_y]
             new_grid[new_x][new_y] = 0
             new_grid[self.empty_pos[0]][self.empty_pos[1]] = tmp
-
+            tuple_new_grid = tuple([tuple(row) for row in new_grid])
             next_state = SlidePuzzleState(gridSize=self.gridSize,
-                                          grid=new_grid,
+                                          grid=tuple_new_grid,
                                           last_action=SlidePuzzleState.NEIGHBORING_STEPS[(dr, dc)],
                                           parent=self,
                                           path_length=self.path_length + 1,

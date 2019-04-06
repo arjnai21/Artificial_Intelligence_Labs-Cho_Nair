@@ -121,7 +121,6 @@ class RoombaRouteState(StateNode):
                                     path_length = self.path_length + 1,
                                     path_cost = self.path_cost + step_cost)
 
-
             states.append(next_state)
 
         return states

@@ -16,9 +16,9 @@ class SlidePuzzleState(StateNode):
     def readFromFile(filename):
         with open(filename, 'r') as file:
             grid = []
-            size = int(file.readline())
+            gridSize = int(file.readline())
             empty = ()
-            for y in range(size):
+            for y in range(gridSize):
                 x = 0
                 row = []
                 for i in file.readline().split():
@@ -26,12 +26,12 @@ class SlidePuzzleState(StateNode):
                         empty = (y,x)
                     row.append(int(i))
                     x += 1
-                assert (len(row) == size)
+                assert (len(row) == gridSize)
 
                 grid.append(tuple(row)) # list -> tuple makes it immutable, needed for hashing
             grid = tuple(grid) # grid is a tuple of tuples - a 2d grid!
 
-            return SlidePuzzleState(size=size,
+            return SlidePuzzleState(gridSize=gridSize,
                                     grid=grid,
                                     last_action=None,
                                     parent=None,
@@ -48,9 +48,9 @@ class SlidePuzzleState(StateNode):
     path_length, the number of actions taken in the path to reach the state
     path_cost (optional), the cost of the entire path to reach the state
     """
-    def __init__(self, size, grid, last_action, parent, path_length, path_cost=0, empty_pos=None) :
+    def __init__(self, gridSize, grid, last_action, parent, path_length, path_cost=0, empty_pos=None) :
         super().__init__(parent, path_length, path_cost)
-        self.size = size
+        self.gridSize = gridSize
         self.grid = grid
         self.last_action = last_action
         self.empty_pos = empty_pos
@@ -61,7 +61,7 @@ class SlidePuzzleState(StateNode):
     Needed by the GUI, should be FAST
     """
     def size(self):
-        return self.size
+        return self.gridSize
 
     """
     Returns the number at the tile at the given row and col (starting from 0).
@@ -141,7 +141,7 @@ class SlidePuzzleState(StateNode):
             new_x, new_y = self.empty_pos[0] + dr, self.empty_pos[1] + dc
 
             # Don't use any out-of-bounds moves
-            if (new_x < 0) or (new_y < 0) or (new_x >= self.size) or (new_y >= self.size):
+            if (new_x < 0) or (new_y < 0) or (new_x >= self.gridSize) or (new_y >= self.gridSize):
                 continue
             # copy grid
             new_grid = [list(row) for row in self.grid]
@@ -150,7 +150,7 @@ class SlidePuzzleState(StateNode):
             new_grid[new_x][new_y] = 0
             new_grid[self.empty_pos[0]][self.empty_pos[1]] = tmp
 
-            next_state = SlidePuzzleState(size=self.size,
+            next_state = SlidePuzzleState(gridSize=self.gridSize,
                                           grid=new_grid,
                                           last_action=SlidePuzzleState.NEIGHBORING_STEPS[(dr, dc)],
                                           parent=self,

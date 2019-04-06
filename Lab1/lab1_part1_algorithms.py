@@ -87,8 +87,6 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
             frontier.append(state)
             counter['num_enqueues'] += 1
 
-        print(len(frontier))
-
     # if loop breaks before finding goal, search is failure; return None
     return None
 

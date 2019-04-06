@@ -115,12 +115,12 @@ class SlidePuzzleState(StateNode):
     """
     # Override
     def __str__(self):
-        str = ""
+        strs = ""
         for i in range(len(self.grid)):
             for j in range(len(self.grid[i])):
-                str += str(self.grid[i][j]) + " "
-            str += "\n"
-        return str
+                strs += str(self.grid[i][j]) + " "
+            strs += "\n"
+        return strs
 
 
     """

@@ -1,5 +1,5 @@
 # Lab 1, Part 1: Uninformed Search.
-# Name(s):
+# Name(s): Arjun Nair, Elias Cho
 
 import random
 from collections import deque
@@ -10,22 +10,20 @@ INF = float('inf')
 
 #### Lab 1, Part 1a: Uninformed Search #################################################
 
+
+#command to run: python lab1_part1_gui.py roomba maze_01.txt
 """
 ### HELPFUL NOTES ABOUT RELEVANT DATA STRUCTURES: ###
-
 Python lists are fine to use as LIFO queues (aka stacks).
 You might consider the append() and pop() methods.
-
 However, python lists don't implement FIFO Queues very efficiently.
 A "deque" (double-ended queue) improve on lists in this regard.
 Consider the append(), appendleft(), pop(), and popleft() methods
     https://docs.python.org/3/library/collections.html#collections.deque
-
 A PriorityQueue implemention is provided for you - see priorityqueue.py.
 It uses the heapq module to implement a heap. You don't need to understand
 heaps to use PriorityQueue, but you can read more here:
     https://docs.python.org/3/library/heapq.html
-
 When implementing a filter (aka graph search), it may be helpful to use the Set class.
 Sets are like python dictionaries, except they only store keys.
 The "in" keyword invokes a key lookup.
@@ -37,13 +35,10 @@ The "in" keyword invokes a key lookup.
 RandWalk is a provided search "algorithm". Attempts to find a path to the goal state from initial_state.
 If a solution is found, returns the final StateNode, from which the path can be found.
 If search fails/terminates early, returns None.
-
 state_callback_fn is called on every "extended" (visited) StateNode.
 Search terminates early if state_callback_fn returns True.
-
 Also updates the counter dict with the num_extends (how many states are extended)
 and num_enqueues (how may states are added to the frontier)
-
 You should implement the following options
 1) avoid backtracking (if avoid_backtrack = True)
 2) filter extended states (if filtering = True)
@@ -61,10 +56,10 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
         # choose next state to "extend" from frontier
         ext_node = random.choice(frontier)
 
-        if (filtering and ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_all_features() in extended_filter):
             continue
 
-        extended_filter.add(ext_node.get_position())
+        extended_filter.add(ext_node.get_all_features())
 
         counter['num_extends'] += 1
 
@@ -83,7 +78,7 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
             if (avoid_backtrack and ext_node.get_parent() == state):
                 continue
 
-            if (filtering and state.get_position() in extended_filter):
+            if (filtering and state.get_all_features() in extended_filter):
                 continue
 
             if (cutoff != INF and state.get_path_length() > cutoff):
@@ -101,22 +96,17 @@ def RandWalk(initial_state, avoid_backtrack = False, filtering = False, cutoff =
 """
 Implement DFS, BFS, and UCS algorithms in a similar paradigm to the above.
 You may find that all 3 are very similar...
-
 Attempt to find a path to the goal state from initial_state.
 If a solution is found, returns the final StateNode, from which the path can be found.
 If search fails/terminates early, returns None.
-
 state_callback_fn should be called on every "extended" (visited) StateNode.
 Search should terminate early if state_callback_fn returns True.
-
 Also updates the counter dict with the num_extends (how many states are extended)
 and num_enqueues (how may states are added to the frontier)
-
 You should implement the following options for each algorithm
 1) avoid backtracking (if avoid_backtrack = True)
 2) filter extended states (if filtering = True)
 3) cutoff search early at a given depth (cutoff)
-
 """
 
 
@@ -133,10 +123,10 @@ def DFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
         # choose next state to "extend" from frontier
         ext_node = frontier.pop()
 
-        if (filtering and ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_all_features() in extended_filter):
             continue
 
-        extended_filter.add(ext_node.get_position())
+        extended_filter.add(ext_node.get_all_features())
 
         counter['num_extends'] += 1
 
@@ -154,7 +144,7 @@ def DFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
             if (avoid_backtrack and ext_node.get_parent() == state):
                 continue
 
-            if (filtering and state.get_position() in extended_filter):
+            if (filtering and state.get_all_features() in extended_filter):
                 continue
 
             if (cutoff != INF and state.get_path_length() > cutoff):
@@ -182,10 +172,10 @@ def BFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
         ext_node = frontier.popleft()
 
 
-        if (filtering and ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_all_features() in extended_filter):
             continue
 
-        extended_filter.add(ext_node.get_position())
+        extended_filter.add(ext_node.get_all_features())
 
         counter['num_extends'] += 1
 
@@ -203,7 +193,7 @@ def BFS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
             if (avoid_backtrack and ext_node.get_parent() == state):
                 continue
 
-            if (filtering and state.get_position() in extended_filter):
+            if (filtering and state.get_all_features() in extended_filter):
                 continue
 
             if (cutoff != INF and state.get_path_length() > cutoff):
@@ -231,10 +221,10 @@ def UCS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
         # choose next state to "extend" from frontier
         ext_node = frontier.pop()
 
-        if (filtering and ext_node.get_position() in extended_filter):
+        if (filtering and ext_node.get_all_features() in extended_filter):
             continue
 
-        extended_filter.add(ext_node.get_position())
+        extended_filter.add(ext_node.get_all_features())
 
         counter['num_extends'] += 1
 
@@ -252,7 +242,7 @@ def UCS(initial_state, avoid_backtrack = False, filtering = False, cutoff = INF,
             if (avoid_backtrack and ext_node.get_parent() == state):
                 continue
 
-            if (filtering and state.get_position() in extended_filter):
+            if (filtering and state.get_all_features() in extended_filter):
                 continue
 
             if (cutoff != INF and state.get_path_length() > cutoff):

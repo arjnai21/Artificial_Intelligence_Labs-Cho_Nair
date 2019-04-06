@@ -1,3 +1,6 @@
+# Lab 1, Part 1: Uninformed Search.
+# Name(s): Arjun Nair, Elias Cho
+
 from statenode import StateNode
 
 #### Lab 1, Part 1b: Problem Representation #################################################
@@ -16,9 +19,9 @@ class SlidePuzzleState(StateNode):
     def readFromFile(filename):
         with open(filename, 'r') as file:
             grid = []
-            gridSize = int(file.readline())
+            grid_size = int(file.readline())
             empty = ()
-            for y in range(gridSize):
+            for y in range(grid_size):
                 x = 0
                 row = []
                 for i in file.readline().split():
@@ -26,12 +29,12 @@ class SlidePuzzleState(StateNode):
                         empty = (y,x)
                     row.append(int(i))
                     x += 1
-                assert (len(row) == gridSize)
+                assert (len(row) == grid_size)
 
                 grid.append(tuple(row)) # list -> tuple makes it immutable, needed for hashing
             grid = tuple(grid) # grid is a tuple of tuples - a 2d grid!
 
-            return SlidePuzzleState(gridSize=gridSize,
+            return SlidePuzzleState(gridSize=grid_size,
                                     grid=grid,
                                     last_action=None,
                                     parent=None,
@@ -90,7 +93,7 @@ class SlidePuzzleState(StateNode):
     """
     # Override
     def get_all_features(self) :
-        return (self.empty_pos, self.grid)
+        return self.empty_pos, self.grid
 
     """
     Returns True if a goal state.

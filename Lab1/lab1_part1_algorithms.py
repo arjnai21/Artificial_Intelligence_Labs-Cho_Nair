@@ -11,7 +11,8 @@ INF = float('inf')
 #### Lab 1, Part 1a: Uninformed Search #################################################
 
 
-#command to run: python lab1_part1_gui.py roomba maze_01.txt
+# command to run: python lab1_part1_gui.py roomba test_mazes/maze_02.txt
+
 """
 ### HELPFUL NOTES ABOUT RELEVANT DATA STRUCTURES: ###
 Python lists are fine to use as LIFO queues (aka stacks).

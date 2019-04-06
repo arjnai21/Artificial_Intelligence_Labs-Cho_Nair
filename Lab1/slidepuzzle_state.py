@@ -155,6 +155,7 @@ class SlidePuzzleState(StateNode):
                                           last_action=SlidePuzzleState.NEIGHBORING_STEPS[(dr, dc)],
                                           parent=self,
                                           path_length=self.path_length + 1,
+                                          path_cost=self.path_length+1,
                                           empty_pos=(new_x, new_y)
                                           )
 

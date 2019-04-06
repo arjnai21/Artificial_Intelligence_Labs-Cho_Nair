@@ -5,6 +5,7 @@ from statenode import StateNode
 
 #### Lab 1, Part 1b: Problem Representation #################################################
 
+
 # command to test: python lab1_part1_gui.py slidepuzzle test_puzzles/test_puzzle[##].txt
 class SlidePuzzleState(StateNode):
 
@@ -116,8 +117,8 @@ class SlidePuzzleState(StateNode):
     def __str__(self):
         str = ""
         for i in range(len(self.grid)):
-            for j in range(self.grid()[i]):
-                str += self.grid[i][j]
+            for j in range(len(self.grid[i])):
+                str += str(self.grid[i][j]) + " "
             str += "\n"
         return str
 

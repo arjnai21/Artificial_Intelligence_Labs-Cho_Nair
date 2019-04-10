@@ -194,7 +194,12 @@ heuristic, you might win! Win what, you ask? At the very least, artificial glory
 """
 
 def roomba_multi_heuristic_basic(roomba_state):
-    return 0;
+    current = roomba_state.get_position()
+    distances = [(abs(current[0] - i[0]) + abs(current[1] - i[1])) for i in roomba_state.get_dirt_locations()]
+    if (distances):
+        return min(distances)
+    else:
+        return 0
 
 def roomba_multi_heuristic_advanced(roomba_state):
     return 0;

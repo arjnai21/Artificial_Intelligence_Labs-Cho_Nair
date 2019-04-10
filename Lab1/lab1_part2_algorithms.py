@@ -33,6 +33,7 @@ def roomba_manhattan_onegoal(roomba_state):
             if grid[r][c] == GOAL : # Find the goal position
                 # Return manhattan distance between roomba and goal
                 return abs(r - pos_r) + abs(c - pos_c)
+    return 0
 
 
 #### Lab 1, Part 2a: Informed Search #################################################
@@ -90,7 +91,47 @@ def AStar(initial_state, heuristic_fn, # heuristic function must be provided
         state_callback_fn = lambda state : False, # A callback function for extended states. If it returns True, terminate
         counter = {'num_enqueues':0, 'num_extends':0}): # A counter for
 
-    # TODO implement A* Search.
+    frontier = PriorityQueue()
+    frontier.append(initial_state, initial_state.get_path_cost() + heuristic_fn(initial_state))
+
+    extended_filter = set()
+
+    while frontier:  # frontier is False when it is empty. So just keep going until out of places to go...
+
+        # choose next state to "extend" from frontier
+        ext_node = frontier.pop()
+
+        if (filtering and ext_node.get_all_features() in extended_filter):
+            continue
+
+        extended_filter.add(ext_node.get_all_features())
+
+        counter['num_extends'] += 1
+
+        # are we there? If so, return the node.
+        if ext_node.is_goal_state():
+            return ext_node
+
+        # Update our caller (e.g. GUI) with the state we're extending.
+        # Terminate search early if True is returned.
+        if (state_callback_fn(ext_node)):
+            break
+
+        ### Update frontier with next states
+        for state in ext_node.generate_next_states():
+            if (avoid_backtrack and ext_node.get_parent() == state):
+                continue
+
+            if (filtering and state.get_all_features() in extended_filter):
+                continue
+
+            if (cutoff != INF and state.get_path_length() > cutoff):
+                continue
+
+            frontier.append(state, state.get_path_cost() + heuristic_fn(state))
+            counter['num_enqueues'] += 1
+
+    # if loop breaks before finding goal, search is failure; return None
     return None
 
 

@@ -1,5 +1,8 @@
 # Lab 1, Part 2: Informed Search.
-# Name(s):
+# Name(s): Arjun Nair, Elias Cho
+
+
+#command to test: python lab1_part2_gui.py slidepuzzle test_puzzles/test_puzzle01.txt
 
 import random
 from priorityqueue import PriorityQueue
@@ -172,7 +175,7 @@ def slidepuzzle_manhattan(puzzle_state):
     grid = puzzle_state.grid
     for i in range(len(grid)):
         for j in range(len(grid)):
-            distance += abs(i - grid[i][j] //3) + abs(j-grid[i][j] % 3) #get goal coordinates and subtract from current
+            distance += abs(i - grid[i][j] // len(grid)) + abs(j-grid[i][j] % len(grid)) #get goal coordinates and subtract from current
     return distance
 
 

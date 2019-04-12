@@ -152,13 +152,29 @@ However, some of the most difficult puzzles might still take a while...
 Return the Hamming distance (number of tiles out of place) of the SlidePuzzleState
 """
 def slidepuzzle_hamming(puzzle_state):
-    return 0
+    count = 0
+    incorrect = 0
+    grid = puzzle_state.grid
+    for i in range(len(grid)):
+        for j in range(len(grid)):
+            if grid[i][j] != count and grid[i][j] != 0:
+                incorrect += 1
+            count +=1
+    return incorrect
 
 """
 Return the sum of Manhattan distances between tiles and goal of the SlidePuzzleState
 """
+
+#goal location: [][num % gridSize]
 def slidepuzzle_manhattan(puzzle_state):
-    return 0
+    distance = 0
+    grid = puzzle_state.grid
+    for i in range(len(grid)):
+        for j in range(len(grid)):
+            distance += abs(i - grid[i][j] //3) + abs(j-grid[i][j] % 3) #get goal coordinates and subtract from current
+    return distance
+
 
 
 #### Lab 1, Part 2c: Roomba Route MULTI-DIRT Heuristics #################################################

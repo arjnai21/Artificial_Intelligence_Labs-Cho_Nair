@@ -214,7 +214,7 @@ heuristic, you might win! Win what, you ask? At the very least, artificial glory
 
 def roomba_multi_heuristic_basic(roomba_state):
     current = roomba_state.get_position()
-    distances = [(abs(current[0] - i[0]) + abs(current[1] - i[1])) for i in roomba_state.get_dirt_locations()]
+    distances = [(((current[0] - i[0])**2 + (current[1] - i[1])**2)**.5) for i in roomba_state.get_dirt_locations()] #euclidean distance
     if distances:
         return sum(distances)
     else:

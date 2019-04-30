@@ -50,9 +50,8 @@ ALGORITHMS =  {"0) Random Policy" : RandChoice,
                 "6) MonteCarloTreeSearch": MonteCarloTreeSearch}
 
 
-
 STEP_TIME_OPTIONS = (0.00, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09,
-                    0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 2.0, 5.0)
+                     0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 2.0, 5.0)
 
 CUTOFF_OPTIONS = tuple( ['INF'] + list(range(1,100)))
 
@@ -81,6 +80,7 @@ STATUS_TEXT = { INITIAL_WAITING: "[P{}] {}'s turn: Waiting...",
                 FINISHED_NO_ACTION: "[P{}] {}'s turn: No move chosen, forfeits!",
                 SEARCH_ERROR: "[P{}] {}'s turn: Something went wrong during search. Check the console for the exception stack trace."
                 }
+
 
 class Lab2GUI_PLAY:
     def __init__(self, master, initial_state, canvas_height, canvas_width, playing_agents):
@@ -115,7 +115,7 @@ class Lab2GUI_PLAY:
         self.restart_button.grid(row = 0, column = 0, sticky = NE)
 
         self.undo_move_button = Button(gameplay_button_frame, text="Undo Last Move",
-                    command= self.undo_last_move, width = 15, pady = 3)
+                                       command=self.undo_last_move, width=15, pady=3)
         self.undo_move_button.grid(row = 0, column = 1, sticky = NW)
 
         self.history_button = Button(gameplay_button_frame, text="Toggle History",

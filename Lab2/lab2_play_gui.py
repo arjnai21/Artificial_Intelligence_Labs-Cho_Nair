@@ -24,7 +24,7 @@ from game_playing_agents import *
 ### GUI too big? Change this number
 MAX_HEIGHT = 350
 
-#yurt
+
 INF = float('inf')
 # For tic-tac-toe, connectfour, and nim
 PIECE_1, PIECE_2, FRAME , EMPTY, TEXT = 'piece_1', 'piece_2','frame', 'empty', 'text'

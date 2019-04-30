@@ -14,10 +14,13 @@ A few have been provided for you, and you can create as many additional ones as
 you like (add to the game specific dict to show them on the GUI)
 
 You MUST implement the following:
+Part 1:
     basic_endgame_utility
     faster_endgame_utility
     win_paths_eval_tictactoe
+Part 2:
     weighted_chains_eval_connectfour
+Part 3:
     aggressive_eval_roomba
     defensive_eval_roomba
 
@@ -31,6 +34,8 @@ Some useful built-in python methods:
     sum(list-like) - returns sum of all (??)
     listobj.count(item) - returns count of items in list
 """
+
+### Part 1: Basic Utility Functions, TicTacToe #########################################
 
 ## General purpose evaluation functions: ###########
 
@@ -130,6 +135,8 @@ tictactoe_functions = {
                                 "win paths": win_paths_eval_tictactoe}
 }
 
+### Part 2 - Implement Connect Four ################################################
+
 ## Connect-four specific evaluation functions: ###########
 
 def weighted_chains_eval_connectfour(state, maximizer_player_num):
@@ -165,6 +172,7 @@ connectfour_functions = {
                               "advanced": advanced_heuristic_eval_connectfour}
 }
 
+### Part 3 - Emergent Behaviours in Roomba Race ################################################
 
 ## Roomba Race specific evaluation functions: ###########
 

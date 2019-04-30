@@ -33,10 +33,10 @@ STONE = 'stone'
 # For roomba race
 AGENT, PATH = (None,'agent_1', 'agent_2'), (None,'path_1', 'path_2')
 
-COLORS = {FLOOR : 'pale green', WALL : 'gray25', CLEANED[1] : 'tomato', CLEANED[2]: 'light blue',
-          AGENT[1]:"orange red", AGENT[2]:"blue", PATH[1]:"orange red", PATH[2]:"blue",
-          PIECE_1 : 'red', PIECE_2 : 'yellow', FRAME: 'blue',EMPTY: 'white' , TEXT: 'black',
-          STONE : 'grey'}
+COLORS = {FLOOR: 'pale green', WALL: 'gray25', CLEANED[1]: 'tomato', CLEANED[2]: 'light blue',
+          AGENT[1]: "orange red", AGENT[2]: "blue", PATH[1]: "orange red", PATH[2]: "blue",
+          PIECE_1: 'red', PIECE_2: 'yellow', FRAME: 'blue', EMPTY: 'white', TEXT: 'black',
+          STONE: 'grey'}
 
 
 PROVIDED_ALGORITHMS = {"0) Random Policy" : RandChoice}

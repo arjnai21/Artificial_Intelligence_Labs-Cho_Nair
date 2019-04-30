@@ -1,6 +1,6 @@
 # Lab 2: Games (Connect-4, Roomba Race)
-# Name(s): Arjun Nair, Elias Cho
-# Email(s): arjnai21@bergen.org, elicho21@bergen.org
+# Name(s):
+# Email(s):
 
 from connectfour_gamestate import ConnectFourGameState
 from tictactoe_gamestate import TicTacToeGameState

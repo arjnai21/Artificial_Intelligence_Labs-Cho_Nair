@@ -63,7 +63,7 @@ while not game_state.is_endgame_state():
     print("[P{}] {}'s turn:".format(current_player, current_agent.name))
 
     start_time = time()
-    ret_val = current_agent.choose_action(game_state)
+    action, exp_util = current_agent.choose_action(game_state)
 
     time_elapsed = time() - start_time
     if time_elapsed < 1:

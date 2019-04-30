@@ -96,7 +96,7 @@ def RandChoice(initial_state,
             heuristic_eval = eval_fn(state, initial_state.get_current_player())
             counter['num_heuristic_evals'] += 1
             # Visualize leaf node with evaluation, check for early termination signal
-            terminated = state_callback_fn(state, heuristic_eval) if VIS_CUTOFF else False
+            terminated = state_callback_fn(state, heuristic_eval)
             # No action because leaf node!
             return None, state, heuristic_eval, terminated
 

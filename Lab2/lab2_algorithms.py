@@ -31,7 +31,7 @@ See RandChoice for an example of this.
 
 LAMBDA:
 
-lambda is a very useful keyword in java for making short, anonymous functions that can be
+lambda is a very useful keyword in python for making short, anonymous functions that can be
 passed as parameters
 Template:
     lambda param1, param2, ... : computedValueToBeReturned

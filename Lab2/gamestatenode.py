@@ -1,4 +1,4 @@
-# from copy import deepcopy
+from copy import deepcopy
 
 """
 This is not meant to be used directly

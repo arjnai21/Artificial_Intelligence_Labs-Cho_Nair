@@ -25,6 +25,7 @@ Part 3:
     defensive_eval_roomba
 
 You MAY wish to implement the following to stretch your creativity:
+
     advanced_heuristic_eval_connectfour
     advanced_heuristic_eval_roomba
 

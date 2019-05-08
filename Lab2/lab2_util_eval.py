@@ -45,8 +45,11 @@ def basic_endgame_utility(state, maximizer_player_num):
     returns utility 1000 if the maximizer has won,
     -1000 if the minimizer has won, or 0 in case of a tie.
     """
-    ## TODO
-    return 0
+    winner = state.endgame_winner();
+    utility = ((winner + 1) % 3 - 1) * 1000
+    if (winner != maximizer_player_num):
+        utility *= -1
+    return utility
 
 def faster_endgame_utility(state, maximizer_player_num):
     """ Given an endgame state and the player number of the "maximizer",
@@ -54,8 +57,12 @@ def faster_endgame_utility(state, maximizer_player_num):
     returning larger absolute scores for winning/losing sooner.
     This incentivizes winning more quickly, and losing later.
     """
-    ## TODO
-    return 0
+    notEmpty = 0
+    for y in range(state.num_rows):
+        for x in range(state.num_cols):
+            if (state.board_array[y][x] != 0):
+                notEmpty += 1
+    return basic_endgame_utility(state, maximizer_player_num) / (notEmpty - 4)
 
 
 

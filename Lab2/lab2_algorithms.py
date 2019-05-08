@@ -8,7 +8,7 @@ from collections import defaultdict # optional, remove later
 from gamestatenode import GameStateNode
 from lab2_util_eval import always_zero
 
-INF = float('inf')
+INF = float("inf")
 """
 HELPFUL NOTES:
 
@@ -186,8 +186,10 @@ def MaximizingDFS(initial_state,
     Both players are modeled as maximizing the utility for the first player.
     This could be interpreted as an optimistic model of your opponents behavior.
     """
-    raise NotImplementedError
-    return None, None, 0, False
+    def MaximizingDFSHelper(state):
+        return None, None, 0, False
+
+    return MaximizingDFSHelper(initial_state)
 
 
 def MinimaxSearch(initial_state,
@@ -205,8 +207,10 @@ def MinimaxSearch(initial_state,
     or maximizing / minimizing the first player (maximizer)'s utility.
     This could be interpreted as a pessimistic model of your opponents behavior.
     """
-    raise NotImplementedError
-    return None, None, 0, False
+    def MinimaxHelper(state):
+        return None, None, 0, False
+
+    return MinimaxHelper(initial_state)
 
 
 def ExpectimaxSearch(initial_state,
@@ -229,8 +233,10 @@ def ExpectimaxSearch(initial_state,
     Since there is no single leaf node that represents the expected outcome,
     return None for the second return value.
     """
-    raise NotImplementedError
-    return None, None, 0, False
+    def ExpectimaxHelper(state):
+        return None, None, 0, False
+
+    return ExpectimaxHelper(initial_state);
 
 
 ### Part 2: Pruning the tree - Transposition Tables, Alpha-Beta Pruning, Move ordering #################################################
@@ -404,7 +410,7 @@ def ProgressiveDeepening (initial_state,
 """
 Extension - meaning not required, entirely optional, just for fun.
 This is for those who are intrigued by the state-of-the-art
-game playing algorithms and are intrested in challenging themselves.
+game playing algorithms and are interested in challenging themselves.
 
 MCTS is the algorithm at the core of AlphaGo and AlphaZero,
 which are at the cutting edge of AI game playing.

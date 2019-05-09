@@ -45,9 +45,9 @@ def basic_endgame_utility(state, maximizer_player_num):
     returns utility 1000 if the maximizer has won,
     -1000 if the minimizer has won, or 0 in case of a tie.
     """
-    winner = state.endgame_winner();
+    winner = state.endgame_winner()
     utility = ((winner + 1) % 3 - 1) * 1000
-    if (winner != maximizer_player_num):
+    if (maximizer_player_num == 2):
         utility *= -1
     return utility
 

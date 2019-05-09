@@ -186,10 +186,52 @@ def MaximizingDFS(initial_state,
     Both players are modeled as maximizing the utility for the first player.
     This could be interpreted as an optimistic model of your opponents behavior.
     """
-    def MaximizingDFSHelper(state):
-        return None, None, 0, False
 
-    return MaximizingDFSHelper(initial_state)
+    def MaximizingDFS_helper(state):
+        counter['num_nodes_seen'] += 1
+        # Base case - endgame leaf node:
+        if state.is_endgame_state():
+            endgame_util = util_fn(state, initial_state.get_current_player())
+            counter['num_endgame_evals'] += 1
+            # Visualize leaf node with utility, check for early termination signal
+            terminated = state_callback_fn(state, endgame_util)
+            # No action because leaf node!
+            return None, state, endgame_util, terminated
+
+        # Early cutoff evaluation:
+        if state.get_path_length() - initial_state.get_path_length() >= cutoff:
+            heuristic_eval = eval_fn(state, initial_state.get_current_player())
+            counter['num_heuristic_evals'] += 1
+            # Visualize leaf node with evaluation, check for early termination signal
+            terminated = state_callback_fn(state, heuristic_eval)
+            # No action because leaf node!
+            return None, state, heuristic_eval, terminated
+
+        # Visualize on downwards traversal. OPTIONAL - could remove
+        state_callback_fn(state, None)
+        chosen_action = None
+        chosen_utility = -INF
+        chosen_leaf_node = None
+        # MaximizingDFS - Find best action for player
+        for action in state.get_all_actions():
+            # What child state results from that action?
+            child_state = state.generate_next_state(action)
+
+            # Search recursively from the child_state
+            child_action, leaf_node, exp_util, terminated = MaximizingDFS_helper(child_state)
+
+            # Visualize on upwards traversal, now with updated utility!
+            terminated = state_callback_fn(state, exp_util) or terminated
+
+            if exp_util > chosen_utility:
+                chosen_action = action
+                chosen_utility = exp_util
+                chosen_leaf_node = leaf_node
+        return chosen_action, chosen_leaf_node, chosen_utility, terminated
+        ### End of recursive helper function ###
+
+    # Simply call the helper function on the initial_state.
+    return MaximizingDFS_helper(initial_state)
 
 
 def MinimaxSearch(initial_state,

@@ -340,7 +340,65 @@ def ExpectimaxSearch(initial_state,
     return None for the second return value.
     """
     def ExpectimaxHelper(state):
-        return None, None, 0, False
+        maximizer = state.get_current_player()
+        minimizer = 1 if maximizer == 2 else 2
+        counter['num_nodes_seen'] += 1
+        # Base case - endgame leaf node:
+        if state.is_endgame_state():
+            endgame_util = util_fn(state, initial_state.get_current_player())
+            counter['num_endgame_evals'] += 1
+            # Visualize leaf node with utility, check for early termination signal
+            terminated = state_callback_fn(state, endgame_util)
+            # No action because leaf node!
+            return None, state, endgame_util, terminated
+
+        # Early cutoff evaluation:
+        if state.get_path_length() - initial_state.get_path_length() >= cutoff:
+            heuristic_eval = eval_fn(state, initial_state.get_current_player())
+            counter['num_heuristic_evals'] += 1
+            # Visualize leaf node with evaluation, check for early termination signal
+            terminated = state_callback_fn(state, heuristic_eval)
+            # No action because leaf node!
+            return None, state, heuristic_eval, terminated
+
+        # Visualize on downwards traversal. OPTIONAL - could remove
+        state_callback_fn(state, None)
+        chosen_action = None
+        maximizer_chosen_utility = -INF
+        minimizer_chosen_utility = INF
+        chosen_leaf_node = None
+        # MaximizingDFS - Find best action for player
+        next_actions = state.get_all_actions()
+        util_sum = 0
+        for i in range(len(next_actions)):
+            # What child state results from that action?
+            child_state = state.generate_next_state(next_actions[i])
+
+            # Search recursively from the child_state
+            child_action, leaf_node, exp_util, terminated = ExpectimaxHelper(child_state)
+            util_sum += exp_util
+
+            # Visualize on upwards traversal, now with updated utility!
+            terminated = state_callback_fn(state, exp_util) or terminated
+            if i == len(next_actions)-1:
+                avg_exp_util = util_sum / len(next_actions)
+                if state.get_current_player() == maximizer:
+                    if avg_exp_util > maximizer_chosen_utility:
+                        chosen_action = next_actions[i]
+                        chosen_utility = avg_exp_util
+                        chosen_leaf_node = leaf_node
+
+                elif state.get_current_player() == minimizer:
+                    if avg_exp_util < minimizer_chosen_utility:
+                        chosen_action = next_actions[i]
+                        chosen_utility = avg_exp_util
+                        chosen_leaf_node = leaf_node
+
+            if terminated:
+                break
+
+        return chosen_action, chosen_leaf_node, chosen_utility, terminated
+        ### End of recursive helper function ###
 
     return ExpectimaxHelper(initial_state);
 

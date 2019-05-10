@@ -249,8 +249,64 @@ def MinimaxSearch(initial_state,
     or maximizing / minimizing the first player (maximizer)'s utility.
     This could be interpreted as a pessimistic model of your opponents behavior.
     """
+
+
+
+
+
     def MinimaxHelper(state):
-        return None, None, 0, False
+        maximizer = state.get_current_player()
+        minimizer = 1 if maximizer == 2 else 2
+        counter['num_nodes_seen'] += 1
+        # Base case - endgame leaf node:
+        if state.is_endgame_state():
+            endgame_util = util_fn(state, initial_state.get_current_player())
+            counter['num_endgame_evals'] += 1
+            # Visualize leaf node with utility, check for early termination signal
+            terminated = state_callback_fn(state, endgame_util)
+            # No action because leaf node!
+            return None, state, endgame_util, terminated
+
+        # Early cutoff evaluation:
+        if state.get_path_length() - initial_state.get_path_length() >= cutoff:
+            heuristic_eval = eval_fn(state, initial_state.get_current_player())
+            counter['num_heuristic_evals'] += 1
+            # Visualize leaf node with evaluation, check for early termination signal
+            terminated = state_callback_fn(state, heuristic_eval)
+            # No action because leaf node!
+            return None, state, heuristic_eval, terminated
+
+        # Visualize on downwards traversal. OPTIONAL - could remove
+        state_callback_fn(state, None)
+        chosen_action = None
+        maximizer_chosen_utility = -INF
+        minimizer_chosen_utility = INF
+        chosen_leaf_node = None
+        # MaximizingDFS - Find best action for player
+        for action in state.get_all_actions():
+            # What child state results from that action?
+            child_state = state.generate_next_state(action)
+
+            # Search recursively from the child_state
+            child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state)
+
+            # Visualize on upwards traversal, now with updated utility!
+
+            if state.get_current_player() == maximizer:
+                if exp_util > maximizer_chosen_utility:
+                    chosen_action = action
+                    chosen_utility = exp_util
+                    chosen_leaf_node = leaf_node
+
+            elif state.get_current_player() == minimizer:
+                if exp_util < minimizer_chosen_utility:
+                    chosen_action = action
+                    chosen_utility = exp_util
+                    chosen_leaf_node = leaf_node
+
+        terminated = state_callback_fn(state, exp_util) or terminated
+        return chosen_action, chosen_leaf_node, chosen_utility, terminated
+        ### End of recursive helper function ###
 
     return MinimaxHelper(initial_state)
 

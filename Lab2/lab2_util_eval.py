@@ -131,7 +131,35 @@ def win_paths_eval_tictactoe(state, maximizer_player_num):
     where M(n) is the total of Maximizer's possible winning lines
     O(n) is the total of Minimizer's possible winning lines.
     """
-    raise NotImplementedError
+
+    value = 0
+    # Horizontal wins
+    for r in range(TicTacToeGameState.num_rows):
+        if all(state.board_array[r][c] == state.board[r][0] for c in range(TicTacToeGameState.num_cols)):
+            if (state.board[r][0] == maximizer_player_num):
+                value += 1
+            elif (state.board[r][0] != 0):
+                value -= 1
+
+    # Vertical wins
+    for c in range(TicTacToeGameState.num_cols):
+        if all(state.board_array[r][c] == state.board[0][c] for r in range(TicTacToeGameState.num_cols)):
+            if (state.board[0][c] == maximizer_player_num):
+                value += 1
+            elif (state.board[0][c] != 0):
+                value -= 1
+
+    # Diagonal down-right wins
+    if all(self.board_array[r][c] == player for r, c in
+           zip(range(TicTacToeGameState.num_rows), range(TicTacToeGameState.num_cols))):
+        return player
+
+    # Diagonal up-right wins
+    if all(self.board_array[r][c] == player for r, c in
+           zip(reversed(range(TicTacToeGameState.num_rows)), range(TicTacToeGameState.num_cols))):
+        return player
+
+    # If you get here, no winner yet!
     return 0
 
 tictactoe_functions = {

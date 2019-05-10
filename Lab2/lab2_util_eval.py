@@ -135,32 +135,38 @@ def win_paths_eval_tictactoe(state, maximizer_player_num):
     value = 0
     # Horizontal wins
     for r in range(TicTacToeGameState.num_rows):
-        if all(state.board_array[r][c] == state.board[r][0] for c in range(TicTacToeGameState.num_cols)):
-            if (state.board[r][0] == maximizer_player_num):
+        if all(state.board_array[r][c] == state.board_array[r][0] for c in range(TicTacToeGameState.num_cols)):
+            if (state.board_array[r][0] == maximizer_player_num):
                 value += 1
-            elif (state.board[r][0] != 0):
+            elif (state.board_array[r][0] != 0):
                 value -= 1
 
     # Vertical wins
     for c in range(TicTacToeGameState.num_cols):
-        if all(state.board_array[r][c] == state.board[0][c] for r in range(TicTacToeGameState.num_cols)):
-            if (state.board[0][c] == maximizer_player_num):
+        if all(state.board_array[r][c] == state.board_array[0][c] for r in range(TicTacToeGameState.num_cols)):
+            if (state.board_array[0][c] == maximizer_player_num):
                 value += 1
-            elif (state.board[0][c] != 0):
+            elif (state.board_array[0][c] != 0):
                 value -= 1
 
     # Diagonal down-right wins
-    if all(self.board_array[r][c] == player for r, c in
+    if all(state.board_array[r][c] == state.board_array[0][0] for r, c in
            zip(range(TicTacToeGameState.num_rows), range(TicTacToeGameState.num_cols))):
-        return player
+        if (state.board_array[0][0] == maximizer_player_num):
+            value += 1
+        elif (state.board_array[0][0] != 0):
+            value -= 1
 
     # Diagonal up-right wins
-    if all(self.board_array[r][c] == player for r, c in
+    if all(state.board_array[r][c] == state.board_array[0][2] for r, c in
            zip(reversed(range(TicTacToeGameState.num_rows)), range(TicTacToeGameState.num_cols))):
-        return player
+        if (state.board_array[0][2] == maximizer_player_num):
+            value += 1
+        elif (state.board_array[0][2] != 0):
+            value -= 1
 
     # If you get here, no winner yet!
-    return 0
+    return value
 
 tictactoe_functions = {
     "endgame_util_fn_dict" : {"basic": basic_endgame_utility,

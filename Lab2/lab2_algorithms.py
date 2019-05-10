@@ -293,6 +293,9 @@ def MinimaxSearch(initial_state,
             child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state)
 
             # Visualize on upwards traversal, now with updated utility!
+            terminated = state_callback_fn(state, exp_util) or terminated
+
+
 
             if state.get_current_player() == maximizer:
                 if exp_util > maximizer_chosen_utility:
@@ -306,7 +309,10 @@ def MinimaxSearch(initial_state,
                     chosen_utility = exp_util
                     chosen_leaf_node = leaf_node
 
-        terminated = state_callback_fn(state, exp_util) or terminated
+            if terminated:
+                break
+
+
         return chosen_action, chosen_leaf_node, chosen_utility, terminated
         ### End of recursive helper function ###
 

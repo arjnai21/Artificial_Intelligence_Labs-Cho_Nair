@@ -340,8 +340,19 @@ def ExpectimaxSearch(initial_state,
     return None for the second return value.
     """
     def ExpectimaxHelper(state):
-        maximizer = state.get_current_player()
-        minimizer = 1 if maximizer == 2 else 2
+        chosen_action = None
+        chosen_utility = -INF
+        chosen_leaf_node = None
+
+        next_actions = state.get_all_actions()
+        util_sum = 0
+        all_actions = []
+
+        print(("   " * state.get_path_length()) + "S" + str(state.get_current_player()) + ": " + str(all_actions) + " " + str(
+            chosen_utility))
+
+        maximizer = initial_state.get_current_player()
+        opponent = 1 if maximizer == 2 else 2
         counter['num_nodes_seen'] += 1
         # Base case - endgame leaf node:
         if state.is_endgame_state():
@@ -363,40 +374,36 @@ def ExpectimaxSearch(initial_state,
 
         # Visualize on downwards traversal. OPTIONAL - could remove
         state_callback_fn(state, None)
-        chosen_action = None
-        maximizer_chosen_utility = -INF
-        minimizer_chosen_utility = INF
-        chosen_leaf_node = None
-        # MaximizingDFS - Find best action for player
-        next_actions = state.get_all_actions()
-        util_sum = 0
+        # TODO put 6 variables up top down here when convinced
         for i in range(len(next_actions)):
             # What child state results from that action?
             child_state = state.generate_next_state(next_actions[i])
 
             # Search recursively from the child_state
             child_action, leaf_node, exp_util, terminated = ExpectimaxHelper(child_state)
+            all_actions.append(exp_util)
             util_sum += exp_util
 
             # Visualize on upwards traversal, now with updated utility!
             terminated = state_callback_fn(state, exp_util) or terminated
-            if i == len(next_actions)-1:
-                avg_exp_util = util_sum / len(next_actions)
-                if state.get_current_player() == maximizer:
-                    if avg_exp_util > maximizer_chosen_utility:
-                        chosen_action = next_actions[i]
-                        chosen_utility = avg_exp_util
-                        chosen_leaf_node = leaf_node
 
-                elif state.get_current_player() == minimizer:
-                    if avg_exp_util < minimizer_chosen_utility:
-                        chosen_action = next_actions[i]
-                        chosen_utility = avg_exp_util
-                        chosen_leaf_node = leaf_node
+            if state.get_current_player() == maximizer:
+                if exp_util > chosen_utility:
+                    chosen_action = next_actions[i]
+                    chosen_utility = exp_util
+                    chosen_leaf_node = leaf_node
+            elif state.get_current_player() == opponent:
+                if i == len(next_actions)-1:
+                    avg_exp_util = util_sum / len(next_actions)
+                    chosen_action = next_actions[i]
+                    chosen_utility = avg_exp_util
+                    chosen_leaf_node = leaf_node
 
             if terminated:
                 break
 
+
+        print(("   " * state.get_path_length()) + "E" + str(state.get_current_player()) + ": " + str(all_actions) + " " + str(chosen_utility))
         return chosen_action, chosen_leaf_node, chosen_utility, terminated
         ### End of recursive helper function ###
 

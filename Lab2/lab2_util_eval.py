@@ -133,37 +133,64 @@ def win_paths_eval_tictactoe(state, maximizer_player_num):
     """
 
     value = 0
+    opponent = 1 if maximizer_player_num == 2 else 2
     # Horizontal wins
-    for r in range(TicTacToeGameState.num_rows):
-        if all(state.board_array[r][c] == state.board_array[r][0] for c in range(TicTacToeGameState.num_cols)):
-            if (state.board_array[r][0] == maximizer_player_num):
-                value += 1
-            elif (state.board_array[r][0] != 0):
-                value -= 1
+    for r in range(state.num_rows):
+        maxCount = 0
+        minCount = 0
+        for c in range(state.num_cols):
+            if state.get_piece_at(r, c) == maximizer_player_num:
+                maxCount += 1
+            elif state.get_piece_at(r, c) == opponent:
+                minCount -= 1
+        if maxCount == 0 and minCount == 0:
+            continue
+        elif maxCount == 0:
+            value -= 1
+        elif minCount == 0:
+            value += 1
 
     # Vertical wins
-    for c in range(TicTacToeGameState.num_cols):
-        if all(state.board_array[r][c] == state.board_array[0][c] for r in range(TicTacToeGameState.num_cols)):
-            if (state.board_array[0][c] == maximizer_player_num):
-                value += 1
-            elif (state.board_array[0][c] != 0):
-                value -= 1
+    for c in range(state.num_cols):
+        maxCount = 0
+        minCount = 0
+        for r in range(state.num_rows):
+            if state.get_piece_at(r, c) == maximizer_player_num:
+                maxCount += 1
+            elif state.get_piece_at(r, c) == opponent:
+                minCount -= 1
+        if maxCount == 0 and minCount == 0:
+            continue
+        elif maxCount == 0:
+            value -= 1
+        elif minCount == 0:
+            value += 1
 
     # Diagonal down-right wins
-    if all(state.board_array[r][c] == state.board_array[0][0] for r, c in
-           zip(range(TicTacToeGameState.num_rows), range(TicTacToeGameState.num_cols))):
-        if (state.board_array[0][0] == maximizer_player_num):
-            value += 1
-        elif (state.board_array[0][0] != 0):
-            value -= 1
+    maxCount = 0
+    minCount = 0
+    for i in range(3):
+        if state.get_piece_at(i, i) == maximizer_player_num:
+            maxCount += 1
+        elif state.get_piece_at(i, i) == opponent:
+            minCount -= 1
+    if maxCount == 0 and minCount != 0:
+        value -= 1
+    elif minCount == 0 and maxCount != 0:
+        value += 1
 
     # Diagonal up-right wins
-    if all(state.board_array[r][c] == state.board_array[0][2] for r, c in
-           zip(reversed(range(TicTacToeGameState.num_rows)), range(TicTacToeGameState.num_cols))):
-        if (state.board_array[0][2] == maximizer_player_num):
-            value += 1
-        elif (state.board_array[0][2] != 0):
-            value -= 1
+    maxCount = 0
+    minCount = 0
+    for i in range(3):
+        if state.get_piece_at(2 - i, i) == maximizer_player_num:
+            maxCount += 1
+        elif state.get_piece_at(2 - i, i) == opponent:
+            minCount -= 1
+    if maxCount == 0 and minCount != 0:
+        value -= 1
+    elif minCount == 0 and maxCount != 0:
+        value += 1
 
     # If you get here, no winner yet!
     return value

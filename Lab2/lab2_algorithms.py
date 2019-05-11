@@ -319,7 +319,7 @@ def MinimaxSearch(initial_state,
         ### End of recursive helper function ###
 
         """
-        old, non-double-recursive minimax
+        old, non-double-recursive minimax 
         def MinimaxHelper(state):
         maximizer = state.get_current_player()
         minimizer = 1 if maximizer == 2 else 2

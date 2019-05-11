@@ -284,6 +284,7 @@ def MinimaxSearch(initial_state,
         def maximize(state):
             chosen_action = None
             chosen_utility = -INF
+            chosen_leaf_node = None
             for action in state.get_all_actions():
                 child_state = state.generate_next_state(action)
                 child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state)

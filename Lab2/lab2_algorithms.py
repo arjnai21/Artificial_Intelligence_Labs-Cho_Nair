@@ -1,6 +1,6 @@
 # Lab 2: Games (Connect-4, Roomba Race)
-# Name(s):
-# Email(s):
+# Name(s): Elias Cho, Arjun Nair
+# Email(s): elicho21@bergen.org, arjnai21@bergen.org
 import random # choice, shuffle methods
 import math # optional, remove later
 from time import time
@@ -293,6 +293,8 @@ def MinimaxSearch(initial_state,
                     chosen_utility = exp_util
                     chosen_action = action
                     chosen_leaf_node = leaf_node
+                if terminated:
+                    break
             return chosen_action, chosen_leaf_node, chosen_utility, terminated
 
         def minimize(state):
@@ -307,6 +309,8 @@ def MinimaxSearch(initial_state,
                     chosen_utility = exp_util
                     chosen_action = action
                     chosen_leaf_node = leaf_node
+                if terminated:
+                    break
             return chosen_action, chosen_leaf_node, chosen_utility, terminated
 
         if state.get_current_player() == maximizer:

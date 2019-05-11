@@ -257,6 +257,70 @@ def MinimaxSearch(initial_state,
 
 
     def MinimaxHelper(state):
+        maximizer = initial_state.get_current_player()
+        minimizer = 1 if maximizer == 2 else 2
+        counter['num_nodes_seen'] += 1
+        # Base case - endgame leaf node:
+        if state.is_endgame_state():
+            endgame_util = util_fn(state, initial_state.get_current_player())
+            counter['num_endgame_evals'] += 1
+            # Visualize leaf node with utility, check for early termination signal
+            terminated = state_callback_fn(state, endgame_util)
+            # No action because leaf node!
+            return None, state, endgame_util, terminated
+
+        # Early cutoff evaluation:
+        if state.get_path_length() - initial_state.get_path_length() >= cutoff:
+            heuristic_eval = eval_fn(state, initial_state.get_current_player())
+            counter['num_heuristic_evals'] += 1
+            # Visualize leaf node with evaluation, check for early termination signal
+            terminated = state_callback_fn(state, heuristic_eval)
+            # No action because leaf node!
+            return None, state, heuristic_eval, terminated
+
+        # Visualize on downwards traversal. OPTIONAL - could remove
+        state_callback_fn(state, None)
+
+        def maximize(state):
+            chosen_action = None
+            chosen_utility = -INF
+            for action in state.get_all_actions():
+                child_state = state.generate_next_state(action)
+                child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state)
+                terminated = state_callback_fn(state, exp_util) or terminated
+                if exp_util > chosen_utility:
+                    chosen_utility = exp_util
+                    chosen_action = action
+                    chosen_leaf_node = leaf_node
+            return chosen_action, chosen_leaf_node, chosen_utility, terminated
+
+        def minimize(state):
+            chosen_action = None
+            chosen_utility = INF
+            chosen_leaf_node = None
+            for action in state.get_all_actions():
+                child_state = state.generate_next_state(action)
+                child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state)
+                terminated = state_callback_fn(state, exp_util) or terminated
+                if exp_util < chosen_utility:
+                    chosen_utility = exp_util
+                    chosen_action = action
+                    chosen_leaf_node = leaf_node
+            return chosen_action, chosen_leaf_node, chosen_utility, terminated
+
+
+        if state.get_current_player() == maximizer:
+            return maximize(state)
+        else:
+            return minimize(state)
+
+
+
+        ### End of recursive helper function ###
+
+        """
+        old, non-recursive minimax
+        def MinimaxHelper(state):
         maximizer = state.get_current_player()
         minimizer = 1 if maximizer == 2 else 2
         counter['num_nodes_seen'] += 1
@@ -315,6 +379,7 @@ def MinimaxSearch(initial_state,
 
         return chosen_action, chosen_leaf_node, chosen_utility, terminated
         ### End of recursive helper function ###
+"""
 
     return MinimaxHelper(initial_state)
 

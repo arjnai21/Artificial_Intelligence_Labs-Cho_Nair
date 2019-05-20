@@ -9,10 +9,8 @@ from roomba_gamestate import RoombaRaceGameState
 """
 In order to use any of the search methods in lab2_algorithms.py
 you'll need define some utility functions and heuristic evaluation functions.
-
 A few have been provided for you, and you can create as many additional ones as
 you like (add to the game specific dict to show them on the GUI)
-
 You MUST implement the following:
 Part 1:
     basic_endgame_utility
@@ -23,12 +21,9 @@ Part 2:
 Part 3:
     aggressive_eval_roomba
     defensive_eval_roomba
-
 You MAY wish to implement the following to stretch your creativity:
-
     advanced_heuristic_eval_connectfour
     advanced_heuristic_eval_roomba
-
 Some useful built-in python methods:
     any(list-like) - returns if at least one True
     all(list-like) - returns if all are True
@@ -79,7 +74,6 @@ def always_zero(state, maximizer_player_num):
 def empty_rows_eval_nim(state, maximizer_player_num):
     """ Given a non-endgame NimGameState, estimate the value
     (expected utility) of the state from maximizer_player_num's view.
-
     Return the fraction of rows that are empty. The more empty rows, the better.
     This is not a zero-sum evaluation - both max and min get the same est. utility.
     Still, this can be helpful because usually forcing rows to empty is good.
@@ -105,7 +99,6 @@ space_values_tictactoe = {  (0,0):20, (0,1):10, (0,2):20,
 def space_values_eval_tictactoe(state, maximizer_player_num):
     """ Given a non-endgame TicTacToeGameState, estimate the value
     (expected utility) of the state from maximizer_player_num's view.
-
     Return a linearly weighted sum of the "value" of each piece's position.
     Maximizer's pieces are + value, Minimizer's pieces are - value.
     """
@@ -124,7 +117,6 @@ def space_values_eval_tictactoe(state, maximizer_player_num):
 def win_paths_eval_tictactoe(state, maximizer_player_num):
     """ Given a non-endgame TicTacToeGameState, estimate the value
     (expected utility) of the state from maximizer_player_num's view.
-
     Return the difference in the number of possible winning paths for
     each player. More precisely:
     Return E(n) = M(n) - O(n)
@@ -213,7 +205,6 @@ def weighted_chains_eval_connectfour(state, maximizer_player_num):
     Given a non-endgame ConnectFourGameState, estimate the value
     (expected utility) of the state
     from maximizer_player_num's view.
-
     Utilizes the number of piece chains found for both players and makes a weighted
     sum to estimate value.
     """
@@ -226,7 +217,6 @@ def advanced_heuristic_eval_connectfour(state, maximizer_player_num):
     Given a non-endgame ConnectFourGameState, estimate the value
     (expected utility) of the state
     from maximizer_player_num's view.
-
     OPTIONAL
     """
     raise NotImplementedError
@@ -250,7 +240,6 @@ def aggressive_eval_roomba(state, maximizer_player_num):
     Given a non-endgame RoombaRaceGameState, estimate the value
     (expected utility) of the state
     from maximizer_player_num's view.
-
     The closer to the opponent, the better.
     """
     raise NotImplementedError
@@ -260,7 +249,6 @@ def defensive_eval_roomba(state, maximizer_player_num):
     """ Given a non-endgame RoombaRaceGameState, estimate the value
     (expected utility) of the state
     from maximizer_player_num's view.
-
     The safer, the better.
     """
     raise NotImplementedError
@@ -271,7 +259,6 @@ def advanced_heuristic_eval_roomba(state, maximizer_player_num):
     Given a non-endgame RoombaRaceGameState, estimate the value
     (expected utility) of the state
     from maximizer_player_num's view.
-
     OPTIONAL
     """
     raise NotImplementedError

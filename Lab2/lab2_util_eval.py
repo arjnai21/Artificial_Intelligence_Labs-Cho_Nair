@@ -208,8 +208,12 @@ def weighted_chains_eval_connectfour(state, maximizer_player_num):
     Utilizes the number of piece chains found for both players and makes a weighted
     sum to estimate value.
     """
-    raise NotImplementedError
-    return 0
+    minimizer_player_num = 1 if maximizer_player_num == 2 else 2
+    chain_sum_diff = 0
+    for i in range(4):
+        chain_sum_diff += (state.get_num_chains(i, maximizer_player_num) - state.get_num_chains(i, minimizer_player_num)) * i
+
+    return chain_sum_diff
 
 
 def advanced_heuristic_eval_connectfour(state, maximizer_player_num):

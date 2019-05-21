@@ -153,8 +153,10 @@ class ConnectFourGameState(GameStateNode):
 
         board_full = True
         for i in range(self.num_cols):
-            if self.is_column_full(i):
+            if not self.is_column_full(i):
                 board_full = False
+
+        print(board_full)
 
         return self.get_num_chains(4, 1) > 0 or self.get_num_chains(4, 2) > 0 or board_full
 
@@ -189,7 +191,7 @@ class ConnectFourGameState(GameStateNode):
         player = self.get_current_player()
         # TEST
 
-        new_board[self.num_cols - self.get_column_height(action) - 1][action] = player
+        new_board[self.num_rows - self.get_column_height(action) - 1][action] = player
 
         next_player = 1 if player == 2 else 2
         return ConnectFourGameState(new_board, self, self.path_length+1, action, next_player)

@@ -187,7 +187,7 @@ class ConnectFourGameState(GameStateNode):
         """
         new_board = deepcopy(self.board_array)
         player = self.get_current_player()
-
+        # TEST
 
         new_board[self.num_cols - self.get_column_height(action) - 1][action] = player
 

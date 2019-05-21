@@ -172,6 +172,8 @@ def MaximizingDFS(initial_state,
         table = {}
 
     def MaximizingDFS_helper(state):
+        if transposition_table and state in table:
+            return table[state]
         counter['num_nodes_seen'] += 1
         # Base case - endgame leaf node:
         if state.is_endgame_state():
@@ -179,6 +181,8 @@ def MaximizingDFS(initial_state,
             counter['num_endgame_evals'] += 1
             # Visualize leaf node with utility, check for early termination signal
             terminated = state_callback_fn(state, endgame_util)
+            if transposition_table:
+                table[state] = (None, state, endgame_util, terminated)
             # No action because leaf node!
             return None, state, endgame_util, terminated
 
@@ -188,15 +192,14 @@ def MaximizingDFS(initial_state,
             counter['num_heuristic_evals'] += 1
             # Visualize leaf node with evaluation, check for early termination signal
             terminated = state_callback_fn(state, heuristic_eval)
+            if transposition_table:
+                table[state] = (None, state, heuristic_eval, terminated)
             # No action because leaf node!
             return None, state, heuristic_eval, terminated
 
-        if transposition_table:
-            if state in table:
-                return table[state]
-
 
         # Visualize on downwards traversal. OPTIONAL - could remove
+
         state_callback_fn(state, None)
         chosen_action = None
         chosen_utility = -INF
@@ -246,8 +249,9 @@ def MinimaxSearch(initial_state,
         table = {}
 
     def MinimaxHelper(state):
+        if transposition_table and state in table:
+            return table[state]
         maximizer = initial_state.get_current_player()
-        minimizer = 1 if maximizer == 2 else 2
         counter['num_nodes_seen'] += 1
         # Base case - endgame leaf node:
         if state.is_endgame_state():
@@ -255,7 +259,10 @@ def MinimaxSearch(initial_state,
             counter['num_endgame_evals'] += 1
             # Visualize leaf node with utility, check for early termination signal
             terminated = state_callback_fn(state, endgame_util)
+            if transposition_table:
+                table[state] = (None, state, endgame_util, terminated)
             # No action because leaf node!
+
             return None, state, endgame_util, terminated
 
         # Early cutoff evaluation:
@@ -264,12 +271,12 @@ def MinimaxSearch(initial_state,
             counter['num_heuristic_evals'] += 1
             # Visualize leaf node with evaluation, check for early termination signal
             terminated = state_callback_fn(state, heuristic_eval)
+            if transposition_table:
+                table[state] = (None, state, heuristic_eval, terminated)
             # No action because leaf node!
             return None, state, heuristic_eval, terminated
 
-        if transposition_table:
-            if state in table:
-                return table[state]
+
 
         # Visualize on downwards traversal. OPTIONAL - could remove
         state_callback_fn(state, None)
@@ -347,6 +354,8 @@ def ExpectimaxSearch(initial_state,
         table = {}
 
     def ExpectimaxHelper(state):
+        if transposition_table and state in table:
+            return table[state]
         maximizer = initial_state.get_current_player()
         opponent = 1 if maximizer == 2 else 2
         counter['num_nodes_seen'] += 1
@@ -356,6 +365,8 @@ def ExpectimaxSearch(initial_state,
             counter['num_endgame_evals'] += 1
             # Visualize leaf node with utility, check for early termination signal
             terminated = state_callback_fn(state, endgame_util)
+            if transposition_table:
+                table[state] = (None, state, endgame_util, terminated)
             # No action because leaf node!
             return None, state, endgame_util, terminated
 
@@ -365,12 +376,12 @@ def ExpectimaxSearch(initial_state,
             counter['num_heuristic_evals'] += 1
             # Visualize leaf node with evaluation, check for early termination signal
             terminated = state_callback_fn(state, heuristic_eval)
+            if transposition_table:
+                table[state] = (None, state, heuristic_eval, terminated)
             # No action because leaf node!
             return None, state, heuristic_eval, terminated
 
-        if transposition_table:
-            if state in table:
-                return table[state]
+
 
         # Visualize on downwards traversal. OPTIONAL - could remove
         state_callback_fn(state, None)

@@ -189,10 +189,7 @@ class ConnectFourGameState(GameStateNode):
         """
         new_board = deepcopy(self.board_array)
         player = self.get_current_player()
-        # TEST
-
         new_board[self.num_rows - self.get_column_height(action) - 1][action] = player
-
         next_player = 1 if player == 2 else 2
         return ConnectFourGameState(new_board, self, self.path_length+1, action, next_player)
 
@@ -225,7 +222,7 @@ class ConnectFourGameState(GameStateNode):
         for row in reversed(self.board_array) :
             if row[col_number] != 0:
                 height += 1
-            else :
+            else:
                 break
         return height
 

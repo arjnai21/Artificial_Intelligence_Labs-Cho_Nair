@@ -257,7 +257,7 @@ def MinimaxSearch(initial_state,
 
 
     def MinimaxHelper(state):
-        maximizer = state.get_current_player()
+        maximizer = initial_state.get_current_player()
         minimizer = 1 if maximizer == 2 else 2
         counter['num_nodes_seen'] += 1
         # Base case - endgame leaf node:
@@ -277,43 +277,44 @@ def MinimaxSearch(initial_state,
             terminated = state_callback_fn(state, heuristic_eval)
             # No action because leaf node!
             return None, state, heuristic_eval, terminated
-
-        # Visualize on downwards traversal. OPTIONAL - could remove
         state_callback_fn(state, None)
-        chosen_action = None
-        maximizer_chosen_utility = -INF
-        minimizer_chosen_utility = INF
-        chosen_leaf_node = None
-        # MaximizingDFS - Find best action for player
-        for action in state.get_all_actions():
-            # What child state results from that action?
-            child_state = state.generate_next_state(action)
-
-            # Search recursively from the child_state
-            child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state)
-
-            # Visualize on upwards traversal, now with updated utility!
-            terminated = state_callback_fn(state, exp_util) or terminated
-
-
-
-            if state.get_current_player() == maximizer:
-                if exp_util > maximizer_chosen_utility:
+        def max_value(state):
+            chosen_utility = -INF
+            chosen_action = None
+            chosen_leaf_node = None
+            for action in state.get_all_actions():
+                nextState = state.generate_next_state(action)
+                nextReturn = MinimaxHelper(nextState)
+                terminated = nextReturn[3]
+                terminated = state_callback_fn(state, chosen_utility) or terminated
+                if nextReturn[2] > chosen_utility:
                     chosen_action = action
-                    chosen_utility = exp_util
-                    chosen_leaf_node = leaf_node
+                    chosen_utility = nextReturn[2]
+                    chosen_leaf_node = nextReturn[1]
 
-            elif state.get_current_player() == minimizer:
-                if exp_util < minimizer_chosen_utility:
+            return chosen_action, chosen_leaf_node, chosen_utility, terminated
+
+        def min_value(state):
+            chosen_utility = INF
+            chosen_action = None
+            chosen_leaf_node = None
+            for action in state.get_all_actions():
+                nextState = state.generate_next_state(action)
+                nextReturn = MinimaxHelper(nextState)
+                terminated = nextReturn[3]
+                terminated = state_callback_fn(state, chosen_utility) or terminated
+                if nextReturn[2] < chosen_utility:
                     chosen_action = action
-                    chosen_utility = exp_util
-                    chosen_leaf_node = leaf_node
-
-            if terminated:
-                break
+                    chosen_utility = nextReturn[2]
+                    chosen_leaf_node = nextReturn[1]
 
 
-        return chosen_action, chosen_leaf_node, chosen_utility, terminated
+        if(state.get_current_player == maximizer):
+            return max_value(state)
+        else:
+            return min_value(state)
+
+
         ### End of recursive helper function ###
 
     return MinimaxHelper(initial_state)

@@ -133,7 +133,16 @@ class ConnectFourGameState(GameStateNode):
         For ConnectFour, the winner is whoever gets
         4 consecutive pieces in a horizontal, vertical, or diagonal direction
         """
-        raise NotImplementedError
+
+        if self.is_endgame_state():
+            if self.get_num_chains(4, 1) > 0:
+                return 1
+            elif self.get_num_chains(4, 2) > 0:
+                return 2
+            else:
+                return 0
+
+        return None
 
 
 
@@ -141,7 +150,13 @@ class ConnectFourGameState(GameStateNode):
         """
         Returns whether or not this state is an endgame (terminal) state.
         """
-        raise NotImplementedError
+
+        board_full = True
+        for i in range(self.num_cols):
+            if self.is_column_full(i):
+                board_full = False
+
+        return self.get_num_chains(4, 1) > 0 or self.get_num_chains(4, 2) > 0 or board_full
 
 
     def get_all_actions(self, custom_move_ordering = False):
@@ -154,7 +169,11 @@ class ConnectFourGameState(GameStateNode):
         In ConnectFour, actions are column numbers.
         Default ordering should be left to right columns.
         """
-        raise NotImplementedError
+        moves = []
+        for i in range(self.num_cols):
+            if not self.is_column_full(i):
+                moves.append(i)
+        return moves
 
     def generate_next_state(self, action) :
         """
@@ -166,7 +185,14 @@ class ConnectFourGameState(GameStateNode):
         You may find deepcopy to be very useful for making
         full copies of nested lists.
         """
-        raise NotImplementedError
+        new_board = deepcopy(self.board_array)
+        player = self.get_current_player()
+
+
+        new_board[self.num_cols - self.get_column_height(action) - 1][action] = player
+
+        next_player = 1 if player == 2 else 2
+        return ConnectFourGameState(new_board, self, self.path_length+1, action, next_player)
 
 
 

@@ -1,6 +1,6 @@
 # Lab 2: Games (Connect-4, Roomba Race)
-# Name(s): Arjun Nair, Elias Cho
-# Email(s): arjnai21@bergen.org, elicho21@bergen.org
+# Name(s): Elias Cho, Arjun Nair
+# Email(s): elicho21@bergen.org, arjnai21@bergen.org
 
 from connectfour_gamestate import ConnectFourGameState
 from tictactoe_gamestate import TicTacToeGameState
@@ -9,10 +9,8 @@ from roomba_gamestate import RoombaRaceGameState
 """
 In order to use any of the search methods in lab2_algorithms.py
 you'll need define some utility functions and heuristic evaluation functions.
-
 A few have been provided for you, and you can create as many additional ones as
 you like (add to the game specific dict to show them on the GUI)
-
 You MUST implement the following:
 Part 1:
     basic_endgame_utility
@@ -23,12 +21,9 @@ Part 2:
 Part 3:
     aggressive_eval_roomba
     defensive_eval_roomba
-
 You MAY wish to implement the following to stretch your creativity:
-
     advanced_heuristic_eval_connectfour
     advanced_heuristic_eval_roomba
-
 Some useful built-in python methods:
     any(list-like) - returns if at least one True
     all(list-like) - returns if all are True
@@ -79,7 +74,6 @@ def always_zero(state, maximizer_player_num):
 def empty_rows_eval_nim(state, maximizer_player_num):
     """ Given a non-endgame NimGameState, estimate the value
     (expected utility) of the state from maximizer_player_num's view.
-
     Return the fraction of rows that are empty. The more empty rows, the better.
     This is not a zero-sum evaluation - both max and min get the same est. utility.
     Still, this can be helpful because usually forcing rows to empty is good.
@@ -105,7 +99,6 @@ space_values_tictactoe = {  (0,0):20, (0,1):10, (0,2):20,
 def space_values_eval_tictactoe(state, maximizer_player_num):
     """ Given a non-endgame TicTacToeGameState, estimate the value
     (expected utility) of the state from maximizer_player_num's view.
-
     Return a linearly weighted sum of the "value" of each piece's position.
     Maximizer's pieces are + value, Minimizer's pieces are - value.
     """
@@ -124,7 +117,6 @@ def space_values_eval_tictactoe(state, maximizer_player_num):
 def win_paths_eval_tictactoe(state, maximizer_player_num):
     """ Given a non-endgame TicTacToeGameState, estimate the value
     (expected utility) of the state from maximizer_player_num's view.
-
     Return the difference in the number of possible winning paths for
     each player. More precisely:
     Return E(n) = M(n) - O(n)
@@ -133,37 +125,64 @@ def win_paths_eval_tictactoe(state, maximizer_player_num):
     """
 
     value = 0
+    opponent = 1 if maximizer_player_num == 2 else 2
     # Horizontal wins
-    for r in range(TicTacToeGameState.num_rows):
-        if all(state.board_array[r][c] == state.board_array[r][0] for c in range(TicTacToeGameState.num_cols)):
-            if (state.board_array[r][0] == maximizer_player_num):
-                value += 1
-            elif (state.board_array[r][0] != 0):
-                value -= 1
+    for r in range(state.num_rows):
+        maxCount = 0
+        minCount = 0
+        for c in range(state.num_cols):
+            if state.get_piece_at(r, c) == maximizer_player_num:
+                maxCount += 1
+            elif state.get_piece_at(r, c) == opponent:
+                minCount -= 1
+        if maxCount == 0 and minCount == 0:
+            continue
+        elif maxCount == 0:
+            value -= 1
+        elif minCount == 0:
+            value += 1
 
     # Vertical wins
-    for c in range(TicTacToeGameState.num_cols):
-        if all(state.board_array[r][c] == state.board_array[0][c] for r in range(TicTacToeGameState.num_cols)):
-            if (state.board_array[0][c] == maximizer_player_num):
-                value += 1
-            elif (state.board_array[0][c] != 0):
-                value -= 1
+    for c in range(state.num_cols):
+        maxCount = 0
+        minCount = 0
+        for r in range(state.num_rows):
+            if state.get_piece_at(r, c) == maximizer_player_num:
+                maxCount += 1
+            elif state.get_piece_at(r, c) == opponent:
+                minCount -= 1
+        if maxCount == 0 and minCount == 0:
+            continue
+        elif maxCount == 0:
+            value -= 1
+        elif minCount == 0:
+            value += 1
 
     # Diagonal down-right wins
-    if all(state.board_array[r][c] == state.board_array[0][0] for r, c in
-           zip(range(TicTacToeGameState.num_rows), range(TicTacToeGameState.num_cols))):
-        if (state.board_array[0][0] == maximizer_player_num):
-            value += 1
-        elif (state.board_array[0][0] != 0):
-            value -= 1
+    maxCount = 0
+    minCount = 0
+    for i in range(3):
+        if state.get_piece_at(i, i) == maximizer_player_num:
+            maxCount += 1
+        elif state.get_piece_at(i, i) == opponent:
+            minCount -= 1
+    if maxCount == 0 and minCount != 0:
+        value -= 1
+    elif minCount == 0 and maxCount != 0:
+        value += 1
 
     # Diagonal up-right wins
-    if all(state.board_array[r][c] == state.board_array[0][2] for r, c in
-           zip(reversed(range(TicTacToeGameState.num_rows)), range(TicTacToeGameState.num_cols))):
-        if (state.board_array[0][2] == maximizer_player_num):
-            value += 1
-        elif (state.board_array[0][2] != 0):
-            value -= 1
+    maxCount = 0
+    minCount = 0
+    for i in range(3):
+        if state.get_piece_at(2 - i, i) == maximizer_player_num:
+            maxCount += 1
+        elif state.get_piece_at(2 - i, i) == opponent:
+            minCount -= 1
+    if maxCount == 0 and minCount != 0:
+        value -= 1
+    elif minCount == 0 and maxCount != 0:
+        value += 1
 
     # If you get here, no winner yet!
     return value
@@ -186,7 +205,6 @@ def weighted_chains_eval_connectfour(state, maximizer_player_num):
     Given a non-endgame ConnectFourGameState, estimate the value
     (expected utility) of the state
     from maximizer_player_num's view.
-
     Utilizes the number of piece chains found for both players and makes a weighted
     sum to estimate value.
     """
@@ -199,7 +217,6 @@ def advanced_heuristic_eval_connectfour(state, maximizer_player_num):
     Given a non-endgame ConnectFourGameState, estimate the value
     (expected utility) of the state
     from maximizer_player_num's view.
-
     OPTIONAL
     """
     raise NotImplementedError
@@ -223,7 +240,6 @@ def aggressive_eval_roomba(state, maximizer_player_num):
     Given a non-endgame RoombaRaceGameState, estimate the value
     (expected utility) of the state
     from maximizer_player_num's view.
-
     The closer to the opponent, the better.
     """
     raise NotImplementedError
@@ -233,7 +249,6 @@ def defensive_eval_roomba(state, maximizer_player_num):
     """ Given a non-endgame RoombaRaceGameState, estimate the value
     (expected utility) of the state
     from maximizer_player_num's view.
-
     The safer, the better.
     """
     raise NotImplementedError
@@ -244,7 +259,6 @@ def advanced_heuristic_eval_roomba(state, maximizer_player_num):
     Given a non-endgame RoombaRaceGameState, estimate the value
     (expected utility) of the state
     from maximizer_player_num's view.
-
     OPTIONAL
     """
     raise NotImplementedError

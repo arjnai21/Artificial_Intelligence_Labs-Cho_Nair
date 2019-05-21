@@ -1,6 +1,6 @@
 # Lab 2: Games (Connect-4, Roomba Race)
-# Name(s):
-# Email(s):
+# Name(s): Elias Cho, Arjun Nair
+# Email(s): elicho21@bergen.org, arjnai21@bergen.org
 import random # choice, shuffle methods
 import math # optional, remove later
 from time import time
@@ -11,14 +11,12 @@ from lab2_util_eval import always_zero
 INF = float("inf")
 """
 HELPFUL NOTES:
-
 CODE REPETITION:
 Every algorithm in this lab is very similar to the last.
 As with the first lab, you'll likely do a lot of copy and paste, with small
 (but crucial!) updates between algorithms. This is okay, but this DOES mean you'll
 want to be SURE that your earlier algorithms are SOLID before moving forward
 (and to apply any later corrections to all your earlier work).
-
 RECURSION and INNER FUNCTIONS:
 Every one of the algorithms in this lab use recursion.
 You may wish to write "helper" inner functions for the recursion, since
@@ -28,9 +26,7 @@ Any parameters or variables declared in the outer function before the inner func
 definition are accessible by inner functions.
 So you can keep the recursive parameters minimal this way.
 See RandChoice for an example of this.
-
 LAMBDA:
-
 lambda is a very useful keyword in python for making short, anonymous functions that can be
 passed as parameters
 Template:
@@ -40,7 +36,6 @@ Examples:
     lambda l : l[0] + l[-1] #sum of first and last items in a list
     lambda : False          # takes no params, returns false always
     lambda *args, **kw : other_fn() # takes any number of params, calls & returns from other_fn
-
 OTHER:
 Some useful built-in python methods:
     random.shuffle(list) - shuffles a list IN-PLACE (returns None)
@@ -51,7 +46,6 @@ Some useful built-in python methods:
 """
 Provided below is a simple search algorithm RandChoice which can serve as a model and starting point
 for your algorithms.
-
 It takes similar parameters and returns the same 4-tuple as the algorithms you must write in Parts 1 and 2.
 """
 
@@ -122,48 +116,36 @@ def RandChoice(initial_state,
 """
 Each algorithm in Part 1 and Part 2 works slightly differently, but all
 has the same parameters and return the same things:
-
 initial_state : GameStateNode, current state of the game. Algorithm should take the
     perspective of the player whose turn it is currently is. (i.e. That player is the maximizer)
-
     Use the GameStateNode API and NOT any properties or methods
     of any particular subclass of GameStateNode (i.e. ConnectFourGameState).
     By doing so, the algorithms can be applied to any subclass of GameStateNode, not just one.
-
 util_fn: Endgame utility evaluation function. Use to calculate the utility of any endgame state.
 Takes 2 parameters:
     1) a state
     2) the player number of the maximizing player.
-
 eval_fn: Heuristic evaluation function. Use to calculate the estimated utility of any non-endgame state.
 Also takes 2 parameters:
     1) a state
     2) the player number of the maximizing player.
-
 cutoff: Maximum depth to search to in the game tree.
-
 state_callback_fn: GUI callback function. It takes two parameters:
     1) a state to visualize
     2) the expected utility of that state.
-
     You must use state_callback_fn whenever the state's value is *finalized*, but you
     may also call whenever you want to visualize other parts of the tree traversal.
-
     You must also heed the termination signal being returned from state_callback_fn
     and terminate search as soon as possible.  If possible some result should still
     be returned, though those results will be (most likely) incorrect.
-
 counter: A dict with stats to maintain count of. Count the number of nodes seen (visited),
     and the number of endgame/heuristic evaluations performed (calls to util_fn and eval_fn).
-
 random_move_order: A True/False flag indicating whether moves should be
     considered in random order or default order.
-
 transposition_table: A True/False flag indicating whether or not a transposition
     table should be used. For Part 1 you may ignore this parameter, but Part 2
     requires that each algorithm address this. You may, of course, implement it early
     for Part 1 submission, though it will not be tested.
-
 Returns the following 4-tuple.
     1) The "best" action to take from initial_state.
     2) State at the end of the expected path in the search tree. (GameStateNode)
@@ -186,6 +168,8 @@ def MaximizingDFS(initial_state,
     Both players are modeled as maximizing the utility for the first player.
     This could be interpreted as an optimistic model of your opponents behavior.
     """
+    if transposition_table:
+        table = {}
 
     def MaximizingDFS_helper(state):
         counter['num_nodes_seen'] += 1
@@ -206,6 +190,11 @@ def MaximizingDFS(initial_state,
             terminated = state_callback_fn(state, heuristic_eval)
             # No action because leaf node!
             return None, state, heuristic_eval, terminated
+
+        if transposition_table:
+            if state in table:
+                return table[state]
+
 
         # Visualize on downwards traversal. OPTIONAL - could remove
         state_callback_fn(state, None)
@@ -229,6 +218,8 @@ def MaximizingDFS(initial_state,
             terminated = state_callback_fn(state, exp_util) or terminated
             if (terminated):
                 break
+        if transposition_table:
+            table[state] = (chosen_action, chosen_leaf_node, chosen_utility, terminated)
         return chosen_action, chosen_leaf_node, chosen_utility, terminated
         ### End of recursive helper function ###
 
@@ -251,10 +242,8 @@ def MinimaxSearch(initial_state,
     or maximizing / minimizing the first player (maximizer)'s utility.
     This could be interpreted as a pessimistic model of your opponents behavior.
     """
-
-
-
-
+    if transposition_table:
+        table = {}
 
     def MinimaxHelper(state):
         maximizer = initial_state.get_current_player()
@@ -277,45 +266,60 @@ def MinimaxSearch(initial_state,
             terminated = state_callback_fn(state, heuristic_eval)
             # No action because leaf node!
             return None, state, heuristic_eval, terminated
+
+        if transposition_table:
+            if state in table:
+                return table[state]
+
+        # Visualize on downwards traversal. OPTIONAL - could remove
         state_callback_fn(state, None)
-        def max_value(state):
-            chosen_utility = -INF
+
+        def maximize(state):
             chosen_action = None
+            chosen_utility = -INF
             chosen_leaf_node = None
             for action in state.get_all_actions():
-                nextState = state.generate_next_state(action)
-                nextReturn = MinimaxHelper(nextState)
-                terminated = nextReturn[3]
-                terminated = state_callback_fn(state, chosen_utility) or terminated
-                if nextReturn[2] > chosen_utility:
+                child_state = state.generate_next_state(action)
+                child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state)
+                terminated = state_callback_fn(state, exp_util) or terminated
+                if exp_util > chosen_utility:
+                    chosen_utility = exp_util
                     chosen_action = action
-                    chosen_utility = nextReturn[2]
-                    chosen_leaf_node = nextReturn[1]
-
+                    chosen_leaf_node = leaf_node
+                if terminated:
+                    break
+            if transposition_table:
+                table[state] = (chosen_action, chosen_leaf_node, chosen_utility, terminated)
             return chosen_action, chosen_leaf_node, chosen_utility, terminated
 
-        def min_value(state):
-            chosen_utility = INF
+        def minimize(state):
             chosen_action = None
+            chosen_utility = INF
             chosen_leaf_node = None
             for action in state.get_all_actions():
-                nextState = state.generate_next_state(action)
-                nextReturn = MinimaxHelper(nextState)
-                terminated = nextReturn[3]
-                terminated = state_callback_fn(state, chosen_utility) or terminated
-                if nextReturn[2] < chosen_utility:
+                child_state = state.generate_next_state(action)
+                child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state)
+                terminated = state_callback_fn(state, exp_util) or terminated
+                if exp_util < chosen_utility:
+                    chosen_utility = exp_util
                     chosen_action = action
-                    chosen_utility = nextReturn[2]
-                    chosen_leaf_node = nextReturn[1]
+                    chosen_leaf_node = leaf_node
+                if terminated:
+                    break
+            if transposition_table:
+                table[state] = (chosen_action, chosen_leaf_node, chosen_utility, terminated)
+            return chosen_action, chosen_leaf_node, chosen_utility, terminated
 
-
-        if(state.get_current_player == maximizer):
-            return max_value(state)
+        if state.get_current_player() == maximizer:
+            return maximize(state)
         else:
-            return min_value(state)
+            return minimize(state)
+
 
 
         ### End of recursive helper function ###
+
+
 
     return MinimaxHelper(initial_state)
 
@@ -336,13 +340,15 @@ def ExpectimaxSearch(initial_state,
     The value of such states are calculated by an average of the possible
     results.
     This could be interpreted as a cautiously optimistic model of your opponents behavior.
-
     Since there is no single leaf node that represents the expected outcome,
     return None for the second return value.
     """
+    if transposition_table:
+        table = {}
+
     def ExpectimaxHelper(state):
-        maximizer = state.get_current_player()
-        minimizer = 1 if maximizer == 2 else 2
+        maximizer = initial_state.get_current_player()
+        opponent = 1 if maximizer == 2 else 2
         counter['num_nodes_seen'] += 1
         # Base case - endgame leaf node:
         if state.is_endgame_state():
@@ -362,13 +368,16 @@ def ExpectimaxSearch(initial_state,
             # No action because leaf node!
             return None, state, heuristic_eval, terminated
 
+        if transposition_table:
+            if state in table:
+                return table[state]
+
         # Visualize on downwards traversal. OPTIONAL - could remove
         state_callback_fn(state, None)
         chosen_action = None
-        maximizer_chosen_utility = -INF
-        minimizer_chosen_utility = INF
-        chosen_leaf_node = None
-        # MaximizingDFS - Find best action for player
+        chosen_utility = -INF
+
+
         next_actions = state.get_all_actions()
         util_sum = 0
         for i in range(len(next_actions)):
@@ -381,24 +390,23 @@ def ExpectimaxSearch(initial_state,
 
             # Visualize on upwards traversal, now with updated utility!
             terminated = state_callback_fn(state, exp_util) or terminated
-            if i == len(next_actions)-1:
-                avg_exp_util = util_sum / len(next_actions)
-                if state.get_current_player() == maximizer:
-                    if avg_exp_util > maximizer_chosen_utility:
-                        chosen_action = next_actions[i]
-                        chosen_utility = avg_exp_util
-                        chosen_leaf_node = leaf_node
 
-                elif state.get_current_player() == minimizer:
-                    if avg_exp_util < minimizer_chosen_utility:
-                        chosen_action = next_actions[i]
-                        chosen_utility = avg_exp_util
-                        chosen_leaf_node = leaf_node
+            if state.get_current_player() == maximizer:
+                if exp_util > chosen_utility:
+                    chosen_action = next_actions[i]
+                    chosen_utility = exp_util
+            elif state.get_current_player() == opponent:
+                if i == len(next_actions)-1:
+                    avg_exp_util = util_sum / len(next_actions)
+                    chosen_action = next_actions[i]
+                    chosen_utility = avg_exp_util
 
             if terminated:
                 break
+        if transposition_table:
+            table[state] = (chosen_action, None, chosen_utility, terminated)
 
-        return chosen_action, chosen_leaf_node, chosen_utility, terminated
+        return chosen_action, None, chosen_utility, terminated
         ### End of recursive helper function ###
 
     return ExpectimaxHelper(initial_state);
@@ -410,34 +418,28 @@ def ExpectimaxSearch(initial_state,
     Task #1) Go back and add a transposition table to MaximizingDFS, MinimaxSearch,
     and ExpectimaxSearch. You should only use it if the transposition_table parameter
     is True. Then test it out and see how many fewer evaluations are done!
-
 Background:
 So far, all our algorithms require searching every branch of the game tree to
 determine a state's value and policy. We've used pre-existing game-specific
 knowledge to implement a cutoff which helps when we can't afford to search all
 the way to the root of the tree.
-
 But there are many clever techniques to use knowledge gained *during* the search
 process to avoid searching many branches of the tree that are unecessary.
 This is called "pruning" and is an enormous area of focus in game-playing AI.
-
 The first pruning technique we will apply is a "transposition table."
 It is essentially a lookup table that stores old results from states
 already searched; if that state is encountered again while searching a different
 part of the tree, we can avoid re-searching that entire subtree.
 This is very similar to the idea of extended state filters from goal-based search!
-
 This technique can be very useful in certain kinds of games where identical states
 can be reached multiple ways. TicTacToe, Nim, and ConnectFour all have many such
 states. However, Roomba Race does not - so using a transposition table there will
 not help very much or at all.
-
 Transposition tables have a major downside - they may be memory-expensive because there
 may be many, many states to remember! In practice, transposition tables are usually size
 limited with some replacement scheme to estimate which stored states are least useful and
 safe to replace. However, you do not need to implement any such size
 limitation or replacement scheme in this lab.
-
 NOTE:
     If using a transposition table, you may return None for
     the best leaf state found. This is because transposition tables cut off
@@ -453,35 +455,29 @@ NOTE:
     move-ordering, it should return the EXACT same result as Minimax,
     but will generally search significantly fewer branches
     and thus perform fewer evaluations.
-
 Background:
 Since Minimax assumes the opponent will play a purely, perfectly
 adversarial strategy, certain branches can be pruned off if you know that
 a player will certainly not choose that action because a better option can be
 guaranteed elsewhere. This technique is called alpha-beta pruning, and it can be
 extremely powerful - potentially cutting down the tree to the square root of its full size!
-
 Alpha-beta pruning can be hard to wrap your brain around, but this short video
 does an excellent job explaining it: https://youtu.be/l-hh51ncgDI?t=313
-
 The effectiveness of alpha-beta pruning depends on what order moves
 are explored. Generally speaking, "better" moves should be explored first.
 Randomized move ordering may help performance, especially where the
 default ordering of actions / next states is actually quite bad.
-
 NOTE:
     CAREFUL with caching values in a transposition table during alpha-beta
     pruning - if a cutoff occurs on a node, the true value remains unknown.
     This can be dealt with in various ways, but in this lab
     we may simply store values ONLY when they are certain (i.e. no alpha-beta
     cutoff)
-
 OPTIONAL :
     You may edit get_all_actions in the various GameStateNode Subclasses
     and customize the ordering of the moves in order to present
     alpha-beta pruning with the likely best moves first.
     Keep the default ordering if custom_move_ordering = False.
-
     You may then call the game state methods get_all_actions() or
     generate_next_states_and_actions() with the optional parameter
     custom_move_ordering = True to use that ordering. If it is better than the
@@ -501,7 +497,6 @@ def MinimaxAlphaBetaSearch(initial_state,
     Searches SOME branches of the game tree by performing Minimax with alpha-beta pruning.
     "Pruning" means safely ignored branches that are certain to not
     change the value of the initial state.
-
     Again, both players are modeled as either maximizing the utility for themselves,
     or maximizing / minimizing the first player (maximizer)'s utility.
     This could be interpreted as a pessimistic model of your opponents behavior.
@@ -524,26 +519,22 @@ sorted(list [key= ..., reversed =..]):  returns a sorted (smallest to greatest) 
 So far, all our search algorithms are hard commitments - we don't get a reliable
 answer until they finish completely. This is not very practical, especially if we
 don't know how deep we can afford to search.
-
 Progressive Deepening (or Iterative Deepening) repeatedly performs
 Minimax with alpha-beta pruning with progressively deepening cutoff depths.
 It is sometimes called an "anytime algorithm" because it can be stopped at any
 time and be able to yield the best answer it has from the deepest search thus far.
 So instead of a cutoff depth limit, a time limit is provided.
-
 The algorithm terminates when either
     1) state_callback_fn returns True as before,
     2) the time limit is reached, or
     3) the search is completely certain about the initial state's value and policy
         because it has reached the endgame on all branches it searched.
-
 Upon termination,
 these algorithms return a slightly different 4-tuple:
     1) A *list* of the best actions from each complete search (lowest to highest cutoff).
     2) A *list* of the leaf state at the end of the expected path from each complete search (lowest to highest cutoff).
     3) A *list* of expected utility from each complete search (lowest to highest cutoff).
     4) The highest cutoff searched to completion.
-
 Ostensibly, the results used from the deepest search would be used by the caller.
 However, the test GUI will print out results from each depth.
 """
@@ -559,7 +550,6 @@ def ProgressiveDeepening (initial_state,
     ):
     """
     Performs progressively deepening Minimax search w/ alpha beta pruning.
-
     If transposition_table is true,
     each search uses the state values calculated by previous searches
     to reorder the moves (after randomizing move ordering, if applicable).
@@ -576,13 +566,11 @@ def ProgressiveDeepening (initial_state,
 Extension - meaning not required, entirely optional, just for fun.
 This is for those who are intrigued by the state-of-the-art
 game playing algorithms and are interested in challenging themselves.
-
 MCTS is the algorithm at the core of AlphaGo and AlphaZero,
 which are at the cutting edge of AI game playing.
 It a beautiful algorithm, but more complex than the rest of the lab!
 Ensure that you are finished solidly with the other algorithms first.
 However, if you succeed, the GUIs and text-game players will work with it!
-
 You may want to do some research online (there are many decent tutorials and blogs)
 to understand the concept.
 """
@@ -597,9 +585,7 @@ def MonteCarloTreeSearch (initial_state,
     """
     Monte Carlo Tree Search builds a tree asymetrically, starting with just the root
     and its children, via randomized simulations.
-
     It grows the tree by repeating these steps:
-
     1) select: the most promising leaf with unexplored children. Traverse the tree
         using UCT (Upper Confidence bounds for Trees) with the exploration_bias
         parameter (* sqrt(2)) as the exploration bias factor.
@@ -608,9 +594,7 @@ def MonteCarloTreeSearch (initial_state,
     4) backpropagation: use the result of the rollout to update statistics of
         expected (average) utility, walking from the expanded child back up
         to the root state node,
-
     The process terminates when time_limit is reached, or state_callback_fn returns False.
-
     It then returns the following 4-tuple:
     1) The "best" action to take from initial_state, based on the gathered statistics.
     2) State at the end of the expected path in the grown search tree. (GameStateNode)

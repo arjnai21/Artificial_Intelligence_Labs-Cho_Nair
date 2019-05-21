@@ -7,7 +7,6 @@ Usage:
     INITIAL_STATE_FILE is a path to a text file or 'default'
     AGENT_# can be human, random, maxdfs, minimax, expectimax, alphabeta, progressive, or montecarlo
 """
-
 from traceback import format_exc
 from sys import argv
 from time import time, sleep

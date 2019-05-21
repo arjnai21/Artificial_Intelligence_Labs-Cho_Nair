@@ -210,9 +210,9 @@ def weighted_chains_eval_connectfour(state, maximizer_player_num):
     """
     minimizer_player_num = 1 if maximizer_player_num == 2 else 2
     chain_sum_diff = 0
+    # No need to count 4 because it would be endgame and eval_fn would not run
     for i in range(1, 4):
         chain_sum_diff += (state.get_num_chains(i, maximizer_player_num) - state.get_num_chains(i, minimizer_player_num)) * i
-
 
     return chain_sum_diff
 

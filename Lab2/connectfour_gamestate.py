@@ -155,9 +155,6 @@ class ConnectFourGameState(GameStateNode):
         for i in range(self.num_cols):
             if not self.is_column_full(i):
                 board_full = False
-
-        print(board_full)
-
         return self.get_num_chains(4, 1) > 0 or self.get_num_chains(4, 2) > 0 or board_full
 
 
@@ -177,7 +174,7 @@ class ConnectFourGameState(GameStateNode):
                 moves.append(i)
         return moves
 
-    def generate_next_state(self, action) :
+    def generate_next_state(self, action):
         """
         Generate and return the next state (GameStateNode object) that would
         result from the given action.
@@ -241,9 +238,12 @@ class ConnectFourGameState(GameStateNode):
         Number of chains of length chain_len
         with number piece in all directions
         """
-        return (self.get_num_chains_hor(chain_len, piece) +
-                self.get_num_chains_ver(chain_len, piece) +
-                self.get_num_chains_diag(chain_len, piece) )
+        num_hor = self.get_num_chains_hor(chain_len, piece)
+
+        if chain_len == 1:  # make sure single chains are only counted once
+            return num_hor
+
+        return num_hor + self.get_num_chains_ver(chain_len, piece) + self.get_num_chains_diag(chain_len, piece)
 
     def get_num_chains_hor(self, chain_len, piece):
         """

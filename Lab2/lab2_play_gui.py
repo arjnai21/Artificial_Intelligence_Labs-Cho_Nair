@@ -8,6 +8,7 @@ Usage:
     AGENT_# can be human, random, maxdfs, minimax, expectimax, alphabeta, progressive, or montecarlo
 """
 from traceback import format_exc
+import re
 from sys import argv
 from time import time, sleep
 from tkinter import * # Tk, Canvas, Frame, Listbox, Button, Checkbutton, IntVar, StringVar, Spinbox, Label

@@ -98,12 +98,12 @@ class ConnectFourGameState(GameStateNode):
         current_player: the number of the player whose turn it is to take an action
         """
         self.board_array = board_array
-        super().__init__(parent = parent,
-            path_length = path_length,
-            previous_action = previous_action,
-            current_player = current_player)
+        super().__init__(parent=parent,
+                            path_length=path_length,
+                            previous_action=previous_action,
+                            current_player=current_player)
 
-    def get_all_features(self) :
+    def get_all_features(self):
         """
         Returns a full feature representation of the environment's current state.
         This should be an immutable type - only primitives, strings, and tuples.
@@ -120,7 +120,7 @@ class ConnectFourGameState(GameStateNode):
         """
         return tuple(tuple(row) for row in self.board_array)
 
-    def endgame_winner(self) :
+    def endgame_winner(self):
         """
         Returns number of winning player if an endgame state.
         If no winning player, return 0.

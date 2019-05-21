@@ -7,6 +7,7 @@ from time import time
 from collections import defaultdict # optional, remove later
 from gamestatenode import GameStateNode
 from lab2_util_eval import always_zero
+from random import shuffle
 
 INF = float("inf")
 """
@@ -204,8 +205,11 @@ def MaximizingDFS(initial_state,
         chosen_action = None
         chosen_utility = -INF
         chosen_leaf_node = None
+        actions = state.get_all_actions()
+        if (random_move_order):
+            shuffle(actions)
         # MaximizingDFS - Find best action for player
-        for action in state.get_all_actions():
+        for action in actions:
             # What child state results from that action?
             child_state = state.generate_next_state(action)
 
@@ -285,7 +289,10 @@ def MinimaxSearch(initial_state,
             chosen_action = None
             chosen_utility = -INF
             chosen_leaf_node = None
-            for action in state.get_all_actions():
+            actions = state.get_all_actions()
+            if (random_move_order):
+                shuffle(actions)
+            for action in actions:
                 child_state = state.generate_next_state(action)
                 child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state)
                 terminated = state_callback_fn(state, exp_util) or terminated
@@ -303,7 +310,10 @@ def MinimaxSearch(initial_state,
             chosen_action = None
             chosen_utility = INF
             chosen_leaf_node = None
-            for action in state.get_all_actions():
+            actions = state.get_all_actions()
+            if (random_move_order):
+                shuffle(actions)
+            for action in actions:
                 child_state = state.generate_next_state(action)
                 child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state)
                 terminated = state_callback_fn(state, exp_util) or terminated
@@ -389,9 +399,12 @@ def ExpectimaxSearch(initial_state,
         chosen_utility = -INF
 
 
-        next_actions = state.get_all_actions()
         util_sum = 0
-        for i in range(len(next_actions)):
+        next_actions = state.get_all_actions()
+        action_order = [i for i in range(len(next_actions))]
+        if (random_move_order):
+            shuffle(action_order)
+        for i in action_order:
             # What child state results from that action?
             child_state = state.generate_next_state(next_actions[i])
 

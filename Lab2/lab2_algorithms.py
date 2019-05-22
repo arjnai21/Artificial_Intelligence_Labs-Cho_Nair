@@ -533,7 +533,6 @@ def MinimaxAlphaBetaSearch(initial_state,
             return table[state]
         maximizer = initial_state.get_current_player()
         counter['num_nodes_seen'] += 1
-        #print("   " * state.get_path_length() + "S: " + str(alpha) + " " + str(beta))
         # Base case - endgame leaf node:
         if state.is_endgame_state():
             endgame_util = util_fn(state, initial_state.get_current_player())
@@ -580,15 +579,11 @@ def MinimaxAlphaBetaSearch(initial_state,
                 if terminated:
                     break
                 my_alpha = max(my_alpha, exp_util)
-                #print("   " * state.get_path_length() + "M: " + str(my_alpha) + " " + str(parent_beta))
                 if (my_alpha >= parent_beta):
-                    #print("   " * state.get_path_length() + "E: " + str(my_alpha) + " " + str(parent_beta))
-                    #print("   " * state.get_path_length() + "PRUNED")
                     pruning = True
                     break
             if transposition_table and not pruning:
                 table[state] = (chosen_action, chosen_leaf_node, chosen_utility, terminated)
-            #print("   " * state.get_path_length() + "E: " + str(my_alpha) + " " + str(parent_beta))
             return chosen_action, chosen_leaf_node, my_alpha, terminated
 
         def minimize(state, parent_alpha, parent_beta):
@@ -611,15 +606,11 @@ def MinimaxAlphaBetaSearch(initial_state,
                 if terminated:
                     break
                 my_beta = min(my_beta, exp_util)
-                #print("   " * state.get_path_length() + "M: " + str(parent_alpha) + " " + str(my_beta))
                 if (parent_alpha >= my_beta):
-                    #print("   " * state.get_path_length() + "E: " + str(parent_alpha) + " " + str(my_beta))
-                    #print("   " * state.get_path_length() + "PRUNED")
                     pruning = True
                     break
             if transposition_table and not pruning:
                 table[state] = (chosen_action, chosen_leaf_node, chosen_utility, terminated)
-            #print("   " * state.get_path_length() + "E: " + str(parent_alpha) + " " + str(my_beta))
             return chosen_action, chosen_leaf_node, chosen_utility, terminated
 
         if state.get_current_player() == maximizer:

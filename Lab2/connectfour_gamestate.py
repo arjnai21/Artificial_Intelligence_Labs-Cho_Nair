@@ -1,3 +1,7 @@
+# Lab 2: Games (Connect-4, Roomba Race)
+# Name(s): Elias Cho, Arjun Nair
+# Email(s): elicho21@bergen.org, arjnai21@bergen.org
+
 from gamestatenode import GameStateNode
 from copy import deepcopy
 

@@ -525,9 +525,115 @@ def MinimaxAlphaBetaSearch(initial_state,
     or maximizing / minimizing the first player (maximizer)'s utility.
     This could be interpreted as a pessimistic model of your opponents behavior.
     """
+    if transposition_table:
+        table = {}
 
-    raise NotImplementedError
-    return None, None, 0, False
+    def MinimaxHelper(state, alpha = -INF, beta = INF):
+        if transposition_table and state in table:
+            return table[state]
+        maximizer = initial_state.get_current_player()
+        counter['num_nodes_seen'] += 1
+        #print("   " * state.get_path_length() + "S: " + str(alpha) + " " + str(beta))
+        # Base case - endgame leaf node:
+        if state.is_endgame_state():
+            endgame_util = util_fn(state, initial_state.get_current_player())
+            counter['num_endgame_evals'] += 1
+            # Visualize leaf node with utility, check for early termination signal
+            terminated = state_callback_fn(state, endgame_util)
+            if transposition_table:
+                table[state] = (None, state, endgame_util, terminated)
+            # No action because leaf node!
+            return None, state, endgame_util, terminated
+
+        # Early cutoff evaluation:
+        if state.get_path_length() - initial_state.get_path_length() >= cutoff:
+            heuristic_eval = eval_fn(state, initial_state.get_current_player())
+            counter['num_heuristic_evals'] += 1
+            # Visualize leaf node with evaluation, check for early termination signal
+            terminated = state_callback_fn(state, heuristic_eval)
+            if transposition_table:
+                table[state] = (None, state, heuristic_eval, terminated)
+            # No action because leaf node!
+            return None, state, heuristic_eval, terminated
+
+
+        # Visualize on downwards traversal. OPTIONAL - could remove
+        state_callback_fn(state, None)
+
+        def maximize(state, parent_alpha, parent_beta):
+            my_alpha = parent_alpha
+            chosen_action = None
+            chosen_utility = -INF
+            chosen_leaf_node = None
+            actions = state.get_all_actions()
+            if (random_move_order):
+                shuffle(actions)
+            pruning = False
+            for action in actions:
+                child_state = state.generate_next_state(action)
+                child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state, my_alpha, parent_beta)
+                terminated = state_callback_fn(state, exp_util) or terminated
+                if exp_util > chosen_utility:
+                    chosen_utility = exp_util
+                    chosen_action = action
+                    chosen_leaf_node = leaf_node
+                if terminated:
+                    break
+                my_alpha = max(my_alpha, exp_util)
+                #print("   " * state.get_path_length() + "M: " + str(my_alpha) + " " + str(parent_beta))
+                if (my_alpha >= parent_beta):
+                    #print("   " * state.get_path_length() + "E: " + str(my_alpha) + " " + str(parent_beta))
+                    #print("   " * state.get_path_length() + "PRUNED")
+                    pruning = True
+                    break
+            if transposition_table and not pruning:
+                table[state] = (chosen_action, chosen_leaf_node, chosen_utility, terminated)
+            #print("   " * state.get_path_length() + "E: " + str(my_alpha) + " " + str(parent_beta))
+            return chosen_action, chosen_leaf_node, my_alpha, terminated
+
+        def minimize(state, parent_alpha, parent_beta):
+            my_beta = parent_beta
+            chosen_action = None
+            chosen_utility = INF
+            chosen_leaf_node = None
+            actions = state.get_all_actions()
+            if (random_move_order):
+                shuffle(actions)
+            pruning = False
+            for action in actions:
+                child_state = state.generate_next_state(action)
+                child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state, parent_alpha, my_beta)
+                terminated = state_callback_fn(state, exp_util) or terminated
+                if exp_util < chosen_utility:
+                    chosen_utility = exp_util
+                    chosen_action = action
+                    chosen_leaf_node = leaf_node
+                if terminated:
+                    break
+                my_beta = min(my_beta, exp_util)
+                #print("   " * state.get_path_length() + "M: " + str(parent_alpha) + " " + str(my_beta))
+                if (parent_alpha >= my_beta):
+                    #print("   " * state.get_path_length() + "E: " + str(parent_alpha) + " " + str(my_beta))
+                    #print("   " * state.get_path_length() + "PRUNED")
+                    pruning = True
+                    break
+            if transposition_table and not pruning:
+                table[state] = (chosen_action, chosen_leaf_node, chosen_utility, terminated)
+            #print("   " * state.get_path_length() + "E: " + str(parent_alpha) + " " + str(my_beta))
+            return chosen_action, chosen_leaf_node, chosen_utility, terminated
+
+        if state.get_current_player() == maximizer:
+            return maximize(state, alpha, beta)
+        else:
+            return minimize(state, alpha, beta)
+
+
+
+        ### End of recursive helper function ###
+
+
+
+    return MinimaxHelper(initial_state)
 
 ### Part 3: Progressive Deepening Algorithms #################################################
 

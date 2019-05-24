@@ -1082,8 +1082,8 @@ class NimGUI(Lab2GUI_SEARCH):
         # Draw all the "empty spots"
         for r in range(0,self.num_rows):
             for c in range(0,self.initial_state.get_stones_in_pile(r)):
-                pos = self.calculate_center_coords(r,c)
-                x1, y1, x2, y2 = self.calculate_box_coords(r,c)
+                pos = self.calculate_center_coords(r, c)
+                x1, y1, x2, y2 = self.calculate_box_coords(r, c)
                 self.canvas.create_oval(x1 + self.margin, y1 + self.margin, x2 - self.margin, y2 - self.margin,  fill= '', outline = COLORS[STONE], width = 2, dash = (4,4), tag='empty')
 
 

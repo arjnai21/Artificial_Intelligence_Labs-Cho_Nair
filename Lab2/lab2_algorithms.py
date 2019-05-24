@@ -198,7 +198,6 @@ def MaximizingDFS(initial_state,
             # No action because leaf node!
             return None, state, heuristic_eval, terminated
 
-
         # Visualize on downwards traversal. OPTIONAL - could remove
 
         state_callback_fn(state, None)

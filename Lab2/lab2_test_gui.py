@@ -1086,16 +1086,15 @@ class NimGUI(Lab2GUI_SEARCH):
                 x1, y1, x2, y2 = self.calculate_box_coords(r, c)
                 self.canvas.create_oval(x1 + self.margin, y1 + self.margin, x2 - self.margin, y2 - self.margin,  fill= '', outline = COLORS[STONE], width = 2, dash = (4,4), tag='empty')
 
-
     def click_canvas_to_action(self, event):
         w = self.canvas.winfo_width() # Get current width of canvas
-        col = event.x // (w //  self.num_cols)
+        col = event.x // (w // self.num_cols)
         h = self.canvas.winfo_height() # Get current height of canvas
-        row = event.y // (h //  self.num_rows)
+        row = event.y // (h // self.num_rows)
         # print('clicked {}'.format(col))
         pile = row
         rem_stones = self.current_state.get_stones_in_pile(pile) - col
-        return (pile, rem_stones)
+        return pile, rem_stones
 
 
 class ConnectFourGUI(Lab2GUI_SEARCH):

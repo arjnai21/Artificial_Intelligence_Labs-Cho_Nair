@@ -1074,9 +1074,9 @@ class NimGUI(Lab2GUI_SEARCH):
                 self.canvas.create_text(pos, fill = COLORS[TEXT], tag = 'numbers',
                      text = str(i+1), font = ('Times New Roman', self.text_size, 'bold' ))
 
-    def draw_background(self, event = None):
-        w = self.canvas.winfo_width() # Get current width of canvas
-        h = self.canvas.winfo_height() # Get current height of canvas
+    def draw_background(self, event=None):
+        w = self.canvas.winfo_width()  # Get current width of canvas
+        h = self.canvas.winfo_height()  # Get current height of canvas
         # Clear the empty spots
         self.canvas.delete('empty')
         # Draw all the "empty spots"

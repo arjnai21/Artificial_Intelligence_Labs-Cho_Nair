@@ -55,7 +55,7 @@ def faster_endgame_utility(state, maximizer_player_num):
     notEmpty = 0
     for y in range(state.num_rows):
         for x in range(state.num_cols):
-            if (state.board_array[y][x] != 0):
+            if state.board_array[y][x] != 0:
                 notEmpty += 1
     return basic_endgame_utility(state, maximizer_player_num) / (notEmpty - 4)
 
@@ -212,7 +212,7 @@ def weighted_chains_eval_connectfour(state, maximizer_player_num):
     chain_sum_diff = 0
     # No need to count 4 because it would be endgame and eval_fn would not run
     for i in range(1, 4):
-        chain_sum_diff += (state.get_num_chains(i, maximizer_player_num) - state.get_num_chains(i, minimizer_player_num)) * i
+        chain_sum_diff += (state.get_num_chains(i, maximizer_player_num) - state.get_num_chains(i, minimizer_player_num)) * (i**2)
 
     return chain_sum_diff
 

@@ -256,8 +256,47 @@ def defensive_eval_roomba(state, maximizer_player_num):
     from maximizer_player_num's view.
     The safer, the better.
     """
-    raise NotImplementedError
-    return 0
+    space = 0
+    grid = state.get_grid()
+    current_pos = state.get_position(maximizer_player_num)
+    minimizer_player_num = 1 if maximizer_player_num == 2 else 2
+    other_pos = state.get_position(minimizer_player_num)
+    y, x = current_pos
+    # East
+    while x < len(grid[y]):
+        if grid[y][x] != '.' or (y, x) == other_pos:
+            break
+        space += 1
+        x += 1
+    x = current_pos[1]
+
+    # South
+    while y < len(grid):
+        if grid[y][x] != '.' or (y, x) == other_pos:
+            break
+        space += 1
+        y += 1
+    y = current_pos[0]
+
+    # West
+    while x >= 0:
+        if grid[y][x] != '.' or (y, x) == other_pos:
+            break
+        space += 1
+        x -= 1
+    x = current_pos[1]
+
+    # North
+    while y >= 0:
+        if grid[y][x] != '.' or (y, x) == other_pos:
+            break
+        space += 1
+        y -= 1
+
+    # Don't count position already at
+    space -= 4
+
+    return space
 
 def advanced_heuristic_eval_roomba(state, maximizer_player_num):
     """

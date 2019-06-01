@@ -516,7 +516,8 @@ def MinimaxAlphaBetaSearch(initial_state,
     random_move_order = False,     # If true, consider moves in random order
     transposition_table = False,# If true, use a transposition table.
     time_limit = INF,
-    table_used = {}
+    table_used = {},
+    prog_deep=False
     ):
     """
     Searches SOME branches of the game tree by performing Minimax with alpha-beta pruning.
@@ -574,17 +575,21 @@ def MinimaxAlphaBetaSearch(initial_state,
             chosen_utility = -INF
             chosen_leaf_node = None
             actions = state.get_all_actions()
+            states_and_actions = state.generate_next_states_and_actions()
+            if prog_deep:
+                sorted(states_and_actions, key=compare_func)
+
             if (random_move_order):
                 shuffle(actions)
             pruning = False
-            for action in actions:
-                child_state = state.generate_next_state(action)
-
+            for state_action in states_and_actions:
+                child_state = state_action[0]
+                print(child_state)
                 child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state, my_alpha, parent_beta)
                 terminated = state_callback_fn(state, exp_util) or terminated
                 if exp_util > chosen_utility:
                     chosen_utility = exp_util
-                    chosen_action = action
+                    chosen_action = state_action[1]
                     chosen_leaf_node = leaf_node
                 if terminated:
                     break
@@ -606,17 +611,21 @@ def MinimaxAlphaBetaSearch(initial_state,
             chosen_action = None
             chosen_utility = INF
             chosen_leaf_node = None
+            states_and_actions = state.generate_next_states_and_actions()
+            if prog_deep:
+                sorted(states_and_actions, key=compare_func)
+
             actions = state.get_all_actions()
             if (random_move_order):
-                shuffle(actions)
+                shuffle(states_and_actions)
             pruning = False
-            for action in actions:
-                child_state = state.generate_next_state(action)
+            for state_action in states_and_actions:
+                child_state = state_action[0]
                 child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state, parent_alpha, my_beta)
                 terminated = state_callback_fn(state, exp_util) or terminated
                 if exp_util < chosen_utility:
                     chosen_utility = exp_util
-                    chosen_action = action
+                    chosen_action = state_action[1]
                     chosen_leaf_node = leaf_node
                 if terminated:
                     break
@@ -712,7 +721,8 @@ def ProgressiveDeepening (initial_state,
         if (transposition_table):
             temp_table = master_table
 
-        chosen_action, chosen_leaf_node, chosen_utility, terminated = MinimaxAlphaBetaSearch(initial_state, util_fn=util_fn, cutoff=cutoff, time_limit=time_limit - elapsed_time, counter = temp_counter, table_used = temp_table)
+
+        chosen_action, chosen_leaf_node, chosen_utility, terminated = MinimaxAlphaBetaSearch(initial_state, util_fn=util_fn, cutoff=cutoff, time_limit=time_limit - elapsed_time, counter = temp_counter, table_used = temp_table, prog_deep=True, transposition_table=transposition_table)
 
         for i in temp_counter.keys():
             counter[i].append(temp_counter[i])

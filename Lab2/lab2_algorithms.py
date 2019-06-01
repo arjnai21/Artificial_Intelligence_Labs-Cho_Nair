@@ -680,7 +680,7 @@ def ProgressiveDeepening (initial_state,
     shallower depths.
     """
     initial_time = time()
-    elapsed_time = time()
+    elapsed_time = time() - initial_time
     best_actions = []
     leaf_states = []
     exp_utils = []

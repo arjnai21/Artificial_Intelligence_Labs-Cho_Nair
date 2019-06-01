@@ -679,6 +679,7 @@ def ProgressiveDeepening (initial_state,
     This improvement often makes up for the costs of repeatedly searching
     shallower depths.
     """
+
     initial_time = time()
     elapsed_time = time() - initial_time
     best_actions = []
@@ -688,9 +689,12 @@ def ProgressiveDeepening (initial_state,
     cutoff = 1
 
     while elapsed_time < time_limit:
-        chosen_action, chosen_leaf_node, chosen_utility, terminated = MinimaxAlphaBetaSearch(initial_state, util_fn=util_fn, cutoff=cutoff, time_limit=time_limit - elapsed_time)
+        temp_counter = {'num_nodes_seen': 0, 'num_endgame_evals': 0, 'num_heuristic_evals': 0}
+        chosen_action, chosen_leaf_node, chosen_utility, terminated = MinimaxAlphaBetaSearch(initial_state, util_fn=util_fn, cutoff=cutoff, time_limit=time_limit - elapsed_time, counter = temp_counter)
+        for i in temp_counter.keys():
+            counter[i].append(temp_counter[i])
         elapsed_time = time() - initial_time
-        if not elapsed_time >= time_limit:
+        if elapsed_time < time_limit:
             best_actions.append(chosen_action)
             leaf_states.append(chosen_leaf_node)
             exp_utils.append(chosen_utility)

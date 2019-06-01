@@ -560,7 +560,15 @@ def MinimaxAlphaBetaSearch(initial_state,
         # Visualize on downwards traversal. OPTIONAL - could remove
         state_callback_fn(state, None)
 
+
+
+
         def maximize(state, parent_alpha, parent_beta):
+            def compare_func(state):
+                if state in table_used:
+                    return table_used[state][2]
+                else:
+                    return alpha
             my_alpha = parent_alpha
             chosen_action = None
             chosen_utility = -INF
@@ -589,6 +597,11 @@ def MinimaxAlphaBetaSearch(initial_state,
             return chosen_action, chosen_leaf_node, my_alpha, terminated
 
         def minimize(state, parent_alpha, parent_beta):
+            def compare_func(state):
+                if state in table_used:
+                    return table_used[state][2]
+                else:
+                    return beta
             my_beta = parent_beta
             chosen_action = None
             chosen_utility = INF

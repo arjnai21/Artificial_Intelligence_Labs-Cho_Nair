@@ -247,8 +247,16 @@ def aggressive_eval_roomba(state, maximizer_player_num):
     from maximizer_player_num's view.
     The closer to the opponent, the better.
     """
-    raise NotImplementedError
-    return 0
+
+
+    current_pos = state.get_position(maximizer_player_num)
+    minimizer_player_num = 1 if maximizer_player_num == 2 else 2
+    other_pos = state.get_position(minimizer_player_num)
+
+     #get manhattan distance
+    distance = abs(current_pos[0] - other_pos[0]) + abs(current_pos[1] - other_pos[1])
+    distance = 100 * (1/distance) #invert so that smaller values are larger. multiply values so that not all values are low decimals
+    return distance
 
 def defensive_eval_roomba(state, maximizer_player_num):
     """ Given a non-endgame RoombaRaceGameState, estimate the value

@@ -686,14 +686,13 @@ def ProgressiveDeepening (initial_state,
     leaf_states = []
     exp_utils = []
 
-    cutoff = 0
+    cutoff = 1
 
     while elapsed_time < time_limit:
         print(elapsed_time)
         temp_counter = {'num_nodes_seen': 0, 'num_endgame_evals': 0, 'num_heuristic_evals': 0}
         chosen_action, chosen_leaf_node, chosen_utility, terminated = MinimaxAlphaBetaSearch(initial_state, util_fn=util_fn, cutoff=cutoff, time_limit=time_limit - elapsed_time, counter = temp_counter)
-        if (chosen_leaf_node.is_endgame_state()):
-            break
+
         for i in temp_counter.keys():
             counter[i].append(temp_counter[i])
         elapsed_time = time() - initial_time
@@ -702,7 +701,9 @@ def ProgressiveDeepening (initial_state,
             leaf_states.append(chosen_leaf_node)
             exp_utils.append(chosen_utility)
             cutoff += 1
-    return best_actions, leaf_states, exp_utils, cutoff
+            if (chosen_leaf_node.is_endgame_state()):  # alpha beta completed fully, no more nodes to be searched
+                break
+    return best_actions, leaf_states, exp_utils, cutoff-1
 
 
 

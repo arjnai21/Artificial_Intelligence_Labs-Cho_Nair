@@ -515,8 +515,8 @@ def MinimaxAlphaBetaSearch(initial_state,
     counter = {'num_nodes_seen':0,'num_endgame_evals':0, 'num_heuristic_evals':0}, # A counter for tracking stats
     random_move_order = False,     # If true, consider moves in random order
     transposition_table = False,# If true, use a transposition table.
-    time_limit = INF
-
+    time_limit = INF,
+    table_used = {}
     ):
     """
     Searches SOME branches of the game tree by performing Minimax with alpha-beta pruning.
@@ -527,7 +527,7 @@ def MinimaxAlphaBetaSearch(initial_state,
     This could be interpreted as a pessimistic model of your opponents behavior.
     """
     if transposition_table:
-        table = {}
+        table = table_used
     start_time = time()
     def MinimaxHelper(state, alpha = -INF, beta = INF):
         if transposition_table and state in table:
@@ -571,6 +571,7 @@ def MinimaxAlphaBetaSearch(initial_state,
             pruning = False
             for action in actions:
                 child_state = state.generate_next_state(action)
+
                 child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state, my_alpha, parent_beta)
                 terminated = state_callback_fn(state, exp_util) or terminated
                 if exp_util > chosen_utility:
@@ -688,29 +689,24 @@ def ProgressiveDeepening (initial_state,
 
     cutoff = 1
 
+    master_table = {}
+
     while elapsed_time < time_limit:
+        print(elapsed_time)
         temp_counter = {'num_nodes_seen': 0, 'num_endgame_evals': 0, 'num_heuristic_evals': 0}
 
-        chosen_action, chosen_leaf_node, chosen_utility, terminated = MinimaxAlphaBetaSearch(initial_state, util_fn=util_fn, cutoff=cutoff, time_limit=time_limit - elapsed_time, counter = temp_counter)
-        print("before adding values\n")
-        print("temp counter:")
-        print(temp_counter)
-        print("counter")
-        print(counter)
-        print()
+        temp_table = {}
+        if (transposition_table):
+            temp_table = master_table
+
+        chosen_action, chosen_leaf_node, chosen_utility, terminated = MinimaxAlphaBetaSearch(initial_state, util_fn=util_fn, cutoff=cutoff, time_limit=time_limit - elapsed_time, counter = temp_counter, table_used = temp_table)
 
         for i in temp_counter.keys():
-
             counter[i].append(temp_counter[i])
             counter[i][0] += temp_counter[i]
 
-
-        print("after adding values\n")
-        print("temp counter:")
-        print(temp_counter)
-        print("counter")
-        print(counter)
-        print()
+        if (transposition_table):
+            master_table = dict(temp_table)
 
         elapsed_time = time() - initial_time
         if elapsed_time < time_limit:

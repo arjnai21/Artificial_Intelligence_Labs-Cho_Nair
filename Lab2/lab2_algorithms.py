@@ -528,7 +528,7 @@ def MinimaxAlphaBetaSearch(initial_state,
     """
     if transposition_table:
         table = {}
-    start_time = 0
+    start_time = time()
     def MinimaxHelper(state, alpha = -INF, beta = INF):
         if transposition_table and state in table:
             return table[state]
@@ -546,7 +546,7 @@ def MinimaxAlphaBetaSearch(initial_state,
             return None, state, endgame_util, terminated
 
         # Early cutoff evaluation:
-        if state.get_path_length() - initial_state.get_path_length() >= cutoff or time() >= time_limit:
+        if state.get_path_length() - initial_state.get_path_length() >= cutoff or time() - start_time >= time_limit:
             heuristic_eval = eval_fn(state, initial_state.get_current_player())
             counter['num_heuristic_evals'] += 1
             # Visualize leaf node with evaluation, check for early termination signal

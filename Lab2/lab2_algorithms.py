@@ -8,6 +8,7 @@ from collections import defaultdict # optional, remove later
 from gamestatenode import GameStateNode
 from lab2_util_eval import always_zero
 from random import shuffle
+from copy import deepcopy
 
 INF = float("inf")
 """
@@ -516,8 +517,8 @@ def MinimaxAlphaBetaSearch(initial_state,
     random_move_order = False,     # If true, consider moves in random order
     transposition_table = False,# If true, use a transposition table.
     time_limit = INF,
-    table_used = {},
-    prog_deep=False
+    table_used = None,
+    prog_deepening = False
     ):
     """
     Searches SOME branches of the game tree by performing Minimax with alpha-beta pruning.
@@ -527,7 +528,9 @@ def MinimaxAlphaBetaSearch(initial_state,
     or maximizing / minimizing the first player (maximizer)'s utility.
     This could be interpreted as a pessimistic model of your opponents behavior.
     """
-    if transposition_table:
+    print(cutoff)
+    table = {}
+    if transposition_table and table_used is not None:
         table = table_used
     start_time = time()
     def MinimaxHelper(state, alpha = -INF, beta = INF):
@@ -566,25 +569,28 @@ def MinimaxAlphaBetaSearch(initial_state,
 
         def maximize(state, parent_alpha, parent_beta):
             def compare_func(state):
-                if state in table_used:
-                    return table_used[state][2]
+                if state in table:
+                    return table[state][2]
                 else:
                     return alpha
             my_alpha = parent_alpha
             chosen_action = None
             chosen_utility = -INF
             chosen_leaf_node = None
-            actions = state.get_all_actions()
-            states_and_actions = state.generate_next_states_and_actions()
-            if prog_deep:
-                sorted(states_and_actions, key=compare_func)
+
+            state_actions = state.generate_next_states_and_actions()
+
+            if (prog_deepening):
+                sorted(state_actions, key=compare_func, reverse=True)
 
             if (random_move_order):
-                shuffle(actions)
+                shuffle(state_actions)
+
             pruning = False
-            for state_action in states_and_actions:
+
+            for state_action in state_actions:
                 child_state = state_action[0]
-                print(child_state)
+
                 child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state, my_alpha, parent_beta)
                 terminated = state_callback_fn(state, exp_util) or terminated
                 if exp_util > chosen_utility:
@@ -603,23 +609,26 @@ def MinimaxAlphaBetaSearch(initial_state,
 
         def minimize(state, parent_alpha, parent_beta):
             def compare_func(state):
-                if state in table_used:
-                    return table_used[state][2]
+                if state in table:
+                    return table[state][2]
                 else:
                     return beta
             my_beta = parent_beta
             chosen_action = None
             chosen_utility = INF
             chosen_leaf_node = None
-            states_and_actions = state.generate_next_states_and_actions()
-            if prog_deep:
-                sorted(states_and_actions, key=compare_func)
 
-            actions = state.get_all_actions()
+            state_actions = state.generate_next_states_and_actions()
+
+            if prog_deepening:
+                sorted(state_actions, key=compare_func, reverse=True)
+
             if (random_move_order):
-                shuffle(states_and_actions)
+                shuffle(state_actions)
+
             pruning = False
-            for state_action in states_and_actions:
+
+            for state_action in state_actions:
                 child_state = state_action[0]
                 child_action, leaf_node, exp_util, terminated = MinimaxHelper(child_state, parent_alpha, my_beta)
                 terminated = state_callback_fn(state, exp_util) or terminated
@@ -719,17 +728,23 @@ def ProgressiveDeepening (initial_state,
 
         temp_table = {}
         if (transposition_table):
-            temp_table = master_table
+            temp_table = deepcopy(master_table)
 
+        print(cutoff)
+        chosen_action, chosen_leaf_node, chosen_utility, terminated = MinimaxAlphaBetaSearch(
+            initial_state, util_fn, eval_fn, cutoff=cutoff, state_callback_fn=state_callback_fn, counter=temp_counter,
+            random_move_order=random_move_order, transposition_table=transposition_table,
+            time_limit=time_limit - elapsed_time, table_used = temp_table, prog_deepening=True)
 
-        chosen_action, chosen_leaf_node, chosen_utility, terminated = MinimaxAlphaBetaSearch(initial_state, util_fn=util_fn, cutoff=cutoff, time_limit=time_limit - elapsed_time, counter = temp_counter, table_used = temp_table, prog_deep=True, transposition_table=transposition_table)
+        if terminated:
+            break
 
         for i in temp_counter.keys():
             counter[i].append(temp_counter[i])
             counter[i][0] += temp_counter[i]
 
         if (transposition_table):
-            master_table = dict(temp_table)
+            master_table = deepcopy(temp_table)
 
         elapsed_time = time() - initial_time
         if elapsed_time < time_limit:
@@ -739,8 +754,7 @@ def ProgressiveDeepening (initial_state,
             cutoff += 1
             if (chosen_leaf_node.is_endgame_state()):  # alpha beta completed fully, no more nodes to be searched
                 break
-        if terminated:
-            break
+
     return best_actions, leaf_states, exp_utils, cutoff-1
 
 

@@ -517,7 +517,8 @@ def MinimaxAlphaBetaSearch(initial_state,
     random_move_order = False,     # If true, consider moves in random order
     transposition_table = False,# If true, use a transposition table.
     time_limit = INF,
-    table_used = None,
+    master_table = None,
+    current_table = None,
     prog_deepening = False
     ):
     """
@@ -528,10 +529,9 @@ def MinimaxAlphaBetaSearch(initial_state,
     or maximizing / minimizing the first player (maximizer)'s utility.
     This could be interpreted as a pessimistic model of your opponents behavior.
     """
-    print(cutoff)
     table = {}
-    if transposition_table and table_used is not None:
-        table = table_used
+    if transposition_table and current_table is not None:
+        table = current_table
     start_time = time()
     def MinimaxHelper(state, alpha = -INF, beta = INF):
         if transposition_table and state in table:
@@ -568,9 +568,9 @@ def MinimaxAlphaBetaSearch(initial_state,
 
 
         def maximize(state, parent_alpha, parent_beta):
-            def compare_func(state):
-                if state in table:
-                    return table[state][2]
+            def compare_func(state_action):
+                if state_action[0] in master_table:
+                    return master_table[state_action[0]][2]
                 else:
                     return alpha
             my_alpha = parent_alpha
@@ -580,10 +580,10 @@ def MinimaxAlphaBetaSearch(initial_state,
 
             state_actions = state.generate_next_states_and_actions()
 
-            if (prog_deepening):
-                sorted(state_actions, key=compare_func, reverse=True)
+            if prog_deepening:
+                state_actions = sorted(state_actions, key=compare_func, reverse=True)
 
-            if (random_move_order):
+            if random_move_order:
                 shuffle(state_actions)
 
             pruning = False
@@ -608,9 +608,9 @@ def MinimaxAlphaBetaSearch(initial_state,
             return chosen_action, chosen_leaf_node, my_alpha, terminated
 
         def minimize(state, parent_alpha, parent_beta):
-            def compare_func(state):
-                if state in table:
-                    return table[state][2]
+            def compare_func(state_action):
+                if state_action[0] in master_table:
+                    return master_table[state_action[0]][2]
                 else:
                     return beta
             my_beta = parent_beta
@@ -621,7 +621,7 @@ def MinimaxAlphaBetaSearch(initial_state,
             state_actions = state.generate_next_states_and_actions()
 
             if prog_deepening:
-                sorted(state_actions, key=compare_func, reverse=True)
+                state_actions = sorted(state_actions, key=compare_func)
 
             if (random_move_order):
                 shuffle(state_actions)
@@ -723,18 +723,13 @@ def ProgressiveDeepening (initial_state,
     master_table = {}
 
     while elapsed_time < time_limit:
-        print(elapsed_time)
         temp_counter = {'num_nodes_seen': 0, 'num_endgame_evals': 0, 'num_heuristic_evals': 0}
 
         temp_table = {}
-        if (transposition_table):
-            temp_table = deepcopy(master_table)
-
-        print(cutoff)
         chosen_action, chosen_leaf_node, chosen_utility, terminated = MinimaxAlphaBetaSearch(
             initial_state, util_fn, eval_fn, cutoff=cutoff, state_callback_fn=state_callback_fn, counter=temp_counter,
             random_move_order=random_move_order, transposition_table=transposition_table,
-            time_limit=time_limit - elapsed_time, table_used = temp_table, prog_deepening=True)
+            time_limit=time_limit - elapsed_time, master_table = master_table, current_table=temp_table, prog_deepening=True)
 
         if terminated:
             break
@@ -744,7 +739,8 @@ def ProgressiveDeepening (initial_state,
             counter[i][0] += temp_counter[i]
 
         if (transposition_table):
-            master_table = deepcopy(temp_table)
+            for i in temp_table.keys():
+                master_table[i] = temp_table[i]
 
         elapsed_time = time() - initial_time
         if elapsed_time < time_limit:
